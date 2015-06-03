@@ -1,4 +1,4 @@
-﻿var appNgNgrid = angular.module('NgNgridApp',  ['ui.bootstrap','ngNgrid']);
+﻿var appNgNgrid = angular.module('NgNgridApp', ['ui.bootstrap', 'ngNgrid']);
 appNgNgrid.controller('HomeController', ['$scope',
     function ($scope) {
 
@@ -154,7 +154,6 @@ appNgNgrid.controller('HomeController', ['$scope',
                    //GlyphFn: function (r) { return 'glyphicon-queen' },
                    //TooltipFn: function (r) { return 'asd'; },
                    Type:'Input'
-
                }
                ,
                {
