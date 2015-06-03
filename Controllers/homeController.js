@@ -1,6 +1,6 @@
 ﻿var appNgNgrid = angular.module('NgNgridApp', ['ui.bootstrap', 'ngNgrid']);
 appNgNgrid.controller('HomeController', ['$scope','$timeout',
-    function ($scope) {
+    function ($scope, $timeout) {
 
         $scope.aSortcolumn = '';
         $scope.aSortdesc = false;        
