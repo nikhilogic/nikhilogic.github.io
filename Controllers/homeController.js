@@ -1,5 +1,5 @@
 ﻿var appNgNgrid = angular.module('NgNgridApp', ['ui.bootstrap', 'ngNgrid']);
-appNgNgrid.controller('HomeController', ['$scope','$timer',
+appNgNgrid.controller('HomeController', ['$scope','$timeout',
     function ($scope) {
 
         $scope.aSortcolumn = '';
