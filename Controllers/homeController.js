@@ -1,5 +1,5 @@
 ﻿var appNgNgrid = angular.module('NgNgridApp', ['ui.bootstrap', 'ngNgrid']);
-appNgNgrid.controller('HomeController', ['$scope',
+appNgNgrid.controller('HomeController', ['$scope','$timer',
     function ($scope) {
 
         $scope.aSortcolumn = '';
@@ -117,7 +117,12 @@ appNgNgrid.controller('HomeController', ['$scope',
                    ClassFn: function (r) { return 'btn-success'; },
                    GlyphFn: function (r) { return 'glyphicon-pawn'; },
                    TooltipFn: function (r) { return 'some tool-tip'; },
-                   ClickFn: function (r) {  r.isNgngridUpdated = true; },
+                   ClickFn: function (r) {
+                       r.isNgngridUpdated = true;
+                       $timeout(function () {
+                           r.isNgngridUpdated = false;
+                       },5000);
+                   },
                    SortProperty: 'length',
                    DisableFilter: true,
                    BadgeFn: function (r) { return r[this.Name].length; }
