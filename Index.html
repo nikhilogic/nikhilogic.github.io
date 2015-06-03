@@ -1,8 +1,9 @@
-﻿<head>
- <title>Test</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">    
-    <link rel="stylesheet" href="./Content/ng-ngrid.css"  >
+﻿<html>
+<head>
+    <title>Test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./Content/ng-ngrid.css">
 </head>
 <body style="overflow:hidden">
     <div ng-app="NgNgridApp">
@@ -25,31 +26,32 @@
     </div>
 
 </body>
-    <script language="javascript">
-        function formatMessage(message) {
-            return '[' + new Date() + '] ' + message;
-        };
+</html>
+<script language="javascript">
+    function formatMessage(message) {
+        return '[' + new Date() + '] ' + message;
+    };
 
-        function logDebug(message) {
-            console.log(formatMessage(message));
-        };
+    function logDebug(message) {
+        console.log(formatMessage(message));
+    };
 
-        function logInfo(message) {
-            console.info(formatMessage(message));
-        };
+    function logInfo(message) {
+        console.info(formatMessage(message));
+    };
 
-        function logWarn(message) {
-            console.warn(formatMessage(message));
-        }
-        function logError(message) {
-            console.error(formatMessage(message));
-        }
+    function logWarn(message) {
+        console.warn(formatMessage(message));
+    }
+    function logError(message) {
+        console.error(formatMessage(message));
+    }
 
-        function formatJson(jsonObject) {
-            return JSON.stringify(jsonObject, null, 4)
-        }
-        
-    </script>
+    function formatJson(jsonObject) {
+        return JSON.stringify(jsonObject, null, 4)
+    }
+
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
