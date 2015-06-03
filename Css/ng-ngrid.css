@@ -1,0 +1,83 @@
+﻿
+.ngngrid-scroll {    
+    overflow-y: auto;
+    position:absolute;
+    width: 100%;
+}
+
+.ngngrid-animaterow {
+    -webkit-animation: animate_bg 2000ms;
+    -moz-animation: animate_bg 2000ms;
+    -o-animation: animate_bg 2000ms;
+    animation: animate_bg 2000ms;
+    -webkit-animation-iteration-count: 2;
+    -moz-animation-iteration-count: 2;
+    -o-animation-iteration-count: 2;
+    animation-iteration-count: 2;
+}
+
+@-moz-keyframes animate_bg {
+    0% {
+        background-color: #428bca;
+    }
+
+    25% {
+        background-color: #5bc0de;
+    }
+
+    50% {
+        background-color: #5cb85c;
+    }
+
+    75% {
+        background-color: #f0ad4e;
+    }
+
+    100% {
+        background-color: #d9534f;
+    }
+}
+
+@-webkit-keyframes animate_bg {
+    0% {
+        background-color: #428bca;
+    }
+
+    25% {
+        background-color: #5bc0de;
+    }
+
+    50% {
+        background-color: #5cb85c;
+    }
+
+    75% {
+        background-color: #f0ad4e;
+    }
+
+    100% {
+        background-color: #d9534f;
+    }
+}
+
+@keyframes animate_bg {
+    0% {
+        background-color: #428bca;
+    }
+
+    25% {
+        background-color: #5bc0de;
+    }
+
+    50% {
+        background-color: #5cb85c;
+    }
+
+    75% {
+        background-color: #f0ad4e;
+    }
+
+    100% {
+        background-color: #d9534f;
+    }
+}

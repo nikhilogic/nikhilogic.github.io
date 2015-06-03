@@ -1,0 +1,267 @@
+﻿<div ng-style="getStyle()">
+    <nav id="ngGridToolbar" class="navbar-form navbar-default navbar-static-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-left">
+                <div class="btn-group">
+                    <label class="btn btn-default" btn-checkbox ng-model="showRowNumbers" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers">
+                        <span class="glyphicon" ng-class="showRowNumbers?'glyphicon-check':'glyphicon-unchecked'"></span> Row #
+                    </label>
+                    <label class="btn btn-default" btn-checkbox ng-model="showRowSelector" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">
+                        <span class="glyphicon" ng-class="showRowSelector?'glyphicon-check':'glyphicon-unchecked'"></span> Selectable Rows
+                    </label>
+                    <label class="btn btn-default" btn-checkbox ng-model="showChildrenCount" data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">
+                        <span class="glyphicon" ng-class="showChildrenCount?'glyphicon-check':'glyphicon-unchecked'"></span> Details Record Count
+                    </label>
+                    <label class="btn btn-default" ng-click="clearAllFilters()" ng-disabled="!anyFiltersExist()" data-toggle="tooltip" data-placement="right" title="Clear All Filters">
+                        Clear all <span class="glyphicon glyphicon-filter"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <div class="btn-group">
+                    <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}-{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
+                    <div>
+                        <pagination class="pagination" onmouseover="" style="cursor: pointer;margin:0" boundary-links="true" total-items="rows.length" ng-model="gridCurrentPage" items-per-page="gridPageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" max-size="5" rotate=""></pagination>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top:-6px" data-toggle="tooltip" data-placement="right" title="Records per Page">
+                    <span class="input-group-addon">
+                        <span class=" glyphicon glyphicon-th-list"></span>
+                    </span>
+                    <select class="form-control" ng-model="gridPageSize" ng-options="number for number in pageSizeOptions"></select>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div id="ngGridTable" class="ngngrid-scroll" ng-style="setGridTableStyle()">
+        <table class="table table-condensed table-bordered table-striped">
+            <tr>
+                <th ng-if="childColumndefinitions.length > 0"></th>
+                <th ng-show="showRowNumbers">#</th>
+                <th ng-show="showRowSelector" ng-click="toggleRowsSelect()" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect All"><span class="glyphicon" ng-class="allRowsSelected ? 'glyphicon-check': 'glyphicon-unchecked'"></span></th>
+                <th ng-repeat="c in columnDefinitions">
+                    <span ng-click="changeSort(c)" style="cursor:pointer">
+                        <u>
+                            {{c.DisplayName}}
+                        </u>
+                        <span ng-show="isSorted(c)" class="glyphicon" ng-class="gridSortOrder?'glyphicon-chevron-down':'glyphicon-chevron-up'"></span>
+                    </span>
+                </th>
+            </tr>
+            <tr>
+                <th ng-if="childColumndefinitions.length > 0"></th>
+                <th ng-show="showRowNumbers"></th>
+                <th ng-show="showRowSelector"></th>
+                <th ng-repeat="c in columnDefinitions">
+                    <div ng-hide="c.DisableFilter" class="input-group input-group-sm">
+                        <input type="text" class="form-control" ng-model="c.ColHeaderFilter" typeahead-on-select="addColumnFilter(c,c.ColHeaderFilter,false);col.ColHeaderFilter = ''" typeahead="v for v in distinctColValues(c) | filter:$viewValue | limitTo:8" />
+                        <div class="input-group-btn" dropdown>
+                            <button dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c) ? 'btn-primary':'btn-default'">
+                                <span class="glyphicon glyphicon-filter"></span>
+                            </button>
+                            <ul class="dropdown-menu" ng-class="{'dropdown-menu-right': $index == columnDefinitions.length-1}" role="menu" style="overflow-y:auto;height:300px;width:auto">
+                                <li>
+                                    <span class="input-group input-group-sm">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span> </span>
+                                        <input type="text" class="form-control" ng-model="dropDownFilter" ng-click="$event.stopPropagation();$event.preventDefault()" />
+                                    </span>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <span class="input-group input-group-sm">
+                                        &nbsp;
+                                        <span class="glyphicon" ng-class="isColFilterApplied(c)?'glyphicon-check':'glyphicon-unchecked'" style="cursor: pointer" ng-click="toggleColFilters(c);$event.stopPropagation()"></span>
+                                        <span>Select/Unselect All</span>
+                                    </span>
+                                </li>
+                                <li class="divider"></li>
+                                <li ng-repeat="distinctVal in (c.DropdownFilteredValues = (distinctColValuesFiltered(c) | filter:dropDownFilter:false)) | orderBy:false">
+                                    <div>
+                                        &nbsp;
+                                        <span class="glyphicon" ng-class="isColFiltered(c,distinctVal)?'glyphicon-check':'glyphicon-unchecked'" ng-click="c.ColHeaderFilter='';addColumnFilter(c,distinctVal,true);$event.stopPropagation()" style="cursor: pointer"></span>
+                                        <span ng-switch="c.Type">
+                                            <label ng-switch-when="Label" style="font-weight:normal" class="label" ng-class="c.FilterClassFn(distinctVal)">
+                                                <span class="glyphicon" ng-class="c.FilterGlyphFn(distinctVal)"></span>
+                                                {{c.FilterTextFn ? c.FilterTextFn(distinctVal):distinctVal}}
+                                            </label>
+                                            <small ng-switch-default style="font-weight:normal">{{distinctVal}}</small>
+                                        </span>
+                                        &nbsp;
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr ng-repeat-start="row in (gridFilteredRows =  (rows | orderBy:gridSortColumn:gridSortOrder | filter:canShowRecord)) | ngNgridPageOffset: (gridCurrentPage-1)*gridPageSize  | limitTo:gridPageSize" style="border-bottom: none" ng-class="{'ngngrid-animaterow':row.isNgngridUpdated,'info':row.isNgngridSelected,'warning':row.isNgngridDirty}">
+                <td ng-if="childColumndefinitions.length > 0">
+                    <label class="btn btn-xs  btn-default" ng-click="row.isNgngridOpen = !row.isNgngridOpen" ng-disabled="childRowsCount(row) <= 0" data-toggle="tooltip" title="{{row.isNgngridOpen?'Collapse Details':'Expand Details'}}">
+                        <span class="glyphicon" ng-class="row.isNgngridOpen?'glyphicon-minus-sign':'glyphicon-plus-sign'"></span>
+
+                        <sub ng-show="showChildrenCount">{{childRowsCount(row)}}</sub>
+
+                    </label>
+                </td>
+                <td ng-show="showRowNumbers">{{$index+1}}</td>
+                <td ng-show="showRowSelector" ng-click="row.isNgngridSelected = !row.isNgngridSelected" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect Agent"><span class="glyphicon" ng-class="row.isNgngridSelected ?  'glyphicon-check': 'glyphicon-unchecked'"></span></button></td>
+                <td ng-repeat="c in columnDefinitions">
+                    <span ng-if="$index ==0 && row.isNgngridDirty" class='glyphicon glyphicon-edit'></span>
+                    <span ng-switch="c.Type">
+                        <span ng-switch-when="Label">
+                            <span class="label label-xs {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}">
+                                <span class="glyphicon {{c.GlyphFn(row)}}"></span>
+                                {{c.TextFn(row)}}
+                                <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
+                            </span>
+                        </span>
+                        <span ng-switch-when="Button">
+                            <button ng-disabled="c.DisableFn(row)" class="btn  btn-xs  {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}" ng-click="c.ClickFn(row)">
+                                <span class="glyphicon  {{c.GlyphFn(row)}}"></span>
+                                <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
+                                {{c.TextFn(row)}}
+                            </button>
+                        </span>
+                        <span ng-switch-when="Date">
+                            <span ng-class="c.ClassFn ? c.ClassFn(row) : ''">
+                                {{row[c.Name]|date:'yyyy-MM-dd HH:mm:ss'}}
+                                <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
+                                <span class="glyphicon  {{c.GlyphFn(row)}}"></span>
+                            </span>
+                        </span>
+                        <span ng-switch-when="Select">
+                            <span class="input-group">
+                                <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">
+                                    <span class="glyphicon" ng-class="c.GlyphFn(row)"></span>
+                                </span>
+                                <select ng-if="o.SelectValue" class="form-control" ng-model="row[c.Name]" ng-options="o[c.SelectValue]  for o in  c.SelectFn(row)  track by o[c.SelectKey]" ng-change="row.isNgngridDirty=true" required>
+                                    <option value="">Select</option>
+                                </select>
+                                <select ng-if="o.SelectValue == null" class="form-control" ng-model="row[c.Name]" ng-options="o  for o in  c.SelectFn(row)  track by o" ng-change="row.isNgngridDirty=true" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </span>
+                        </span>
+                        <span ng-switch-when="Link">
+                            <a href="{{c.UrlFn(row)}}" target="_blank" ng-class="c.ClassFn(row)">
+                                {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
+                                <span class="glyphicon  {{c.GlyphFn(row)}}">
+                                </span>
+                                <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
+                            </a>
+                        </span>
+                        <span ng-switch-when="Input">
+                            <input class="form-control" ng-model="row[c.Name]" ng-readonly="c.DisabledFn(row)" ng-change="row.isNgngridDirty=true" />
+                        </span>
+                        <span ng-switch-default>
+                            <span ng-class="c.ClassFn ? c.ClassFn(row) : ''">
+                                {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
+                                <span class="glyphicon {{c.GlyphFn(row)}}"></span>
+                                <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
+                            </span>
+                        </span>
+                </td>
+            </tr>
+            <tr ng-repeat-end ng-if="row.isNgngridOpen" ng-class="{'ngngrid-animaterow':row.isNgngridUpdated,'info':row.isNgngridSelected,'warning':row.isNgngridDirty}">
+                <td></td>
+                <td colspan="{{columnDefinitions.length}}">
+                    <table class="table table-condensed table-bordered table-hover table-striped" ng-repeat="childColDef in childColumndefinitions">
+                        <tr>
+                            <th ng-repeat="childCol in childColDef">
+                                <span ng-click="changeChildSort(childCol)" style="cursor:pointer">
+                                    <u>
+                                        {{childCol.DisplayName}}
+                                    </u>
+                                    <span ng-show="isChildSorted(childCol)" class="glyphicon" ng-class="gridChildrenSortOrder?'glyphicon-chevron-down':'glyphicon-chevron-up'"></span>
+                                </span>
+                            </th>
+                        </tr>
+                        <tr ng-repeat="childRow in getChildRows(row,childPropertynames[$index]) | orderBy:gridChildrenSortColumn:gridChildrenSortOrder" ng-class="{'ngngrid-animaterow':childRow.isNgngridUpdated,'info':childRow.isNgngridSelected,'warning':childRow.isNgngridDirty}">
+                            <td ng-repeat="childCol in childColDef">
+                                <span ng-if="$index ==0 && childRow.isNgngridDirty" class='glyphicon glyphicon-edit'></span>
+                                <span ng-switch="childCol.Type">
+                                    <span ng-switch-when="Label">
+                                        <span class="label label-xs {{childCol.ClassFn(childRow)}}" data-toggle="tooltip" data-placement="right" title="{{childCol.TooltipFn(childRow)}}">
+                                            <span class="glyphicon {{childCol.GlyphFn(childRow)}}"></span>
+                                            {{childCol.TextFn(childRow)}}
+                                            <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                        </span>
+                                    </span>
+                                    <span ng-switch-when="Button">
+                                        <button ng-disabled="childCol.DisableFn(childRow)" class="btn  btn-xs  {{childCol.ClassFn(childRow)}}" data-toggle="tooltip" data-placement="right" title="{{childCol.TooltipFn(childRow)}}" ng-click="childCol.ClickFn(childRow)">
+                                            <span class="glyphicon  {{childCol.GlyphFn(childRow)}}"></span>
+                                            <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                            {{childCol.TextFn(childRow)}}
+                                        </button>
+                                    </span>
+                                    <span ng-switch-when="Date">
+                                        <span ng-class="childCol.ClassFn ? childCol.ClassFn(childRow) : ''">
+                                            {{row[childCol.Name]|date:'yyyy-MM-dd HH:mm:ss'}}
+                                            <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                            <span class="glyphicon  {{childCol.GlyphFn(childRow)}}"></span>
+                                        </span>
+                                    </span>
+                                    <span ng-switch-when="Select">
+                                        <span class="input-group">
+                                            <span ng-show="childCol.ClassFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
+                                                <span class="glyphicon" ng-class="childCol.GlyphFn(row)"></span>
+                                            </span>
+                                            <select name="status" ng-disabled="childCol.DisableFn(childRow)" class="form-control" ng-model="childRow[childCol.Name]" ng-options="o[childCol.SelectValue]  for o in  childCol.SelectFn(childRow)  track by o[childCol.SelectKey]" ng-change="childRow.isNgngridDirty=true" required>
+                                                <option value="">Select</option>
+                                            </select>
+                                        </span>
+                                    </span>
+                                    <span ng-switch-when="Link">
+                                        <a href="{{childCol.UrlFn(childRow)}}" target="_blank">
+                                            {{childCol.TextFn ?  childCol.TextFn(childRow) :  childRow[childCol.Name]}}
+                                            <span class="glyphicon  {{childCol.GlyphFn(childRow)}}">
+                                            </span>
+                                            <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                        </a>
+                                    </span>
+                                    <span ng-switch-when="Input">
+                                        <input class=" form-control" ng-model="childRow[childCol.Name]" ng-readonly="childCol.DisabledFn(childRow)" ng-change="childRow.isNgngridDirty=true" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" />
+                                    </span>
+                                    <span ng-switch-default>
+                                        <span>{{childCol.TextFn ?  childCol.TextFn(childRow) :  childRow[childCol.Name]}}</span>
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table class="table table-condensed table-bordered table-hover table-striped" ng-if="rowFooterdefinitions.length > 0">
+                        <tr ng-repeat="rowFooter in rowFooterdefinitions">
+                            <td ng-repeat="footerItem in rowFooter">
+                                <span ng-switch="footerItem.Type">
+                                    <span ng-switch-when="Button">
+                                        <span class="btn-group">
+                                            <button class="btn {{footerItem.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{footerItem.TooltipFn(row)}}" ng-click="footerItem.ClickFn(row)" ng-disabled="footerItem.DisableFn(row)">
+                                                <span class="glyphicon {{footerItem.GlyphFn(row)}}"></span>
+                                                <span ng-show="footerItem.BadgeFn" class="badge" ng-class="footerItem.BadgeClass">{{footerItem.BadgeFn(row)}}</span>
+                                                {{footerItem.TextFn(row)}}
+                                            </button>
+                                        </span>
+                                    </span>
+                                    <span ng-switch-when="Label">
+                                        <span class="label label-xs {{footerItem.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{footerItem.TooltipFn(row)}}">
+                                            <span class="glyphicon {{footerItem.GlyphFn(row)}}"></span>
+                                            <span ng-show="rowFooter.BadgeFn" class="badge" ng-class="footerItem.BadgeClass">{{footerItem.BadgeFn(row)}}</span>
+                                            {{footerItem.TextFn(row)}}
+                                        </span>
+                                    </span>
+                                    <span ng-switch-default ng-class="footerItem.ClassFn(row)">
+                                        {{footerItem.TextFn(row)}}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <progressbar ng-show="rowsLoading" class="active progress-striped" value="100" type="primary">
+            <b><i>{{rowsLoadingText}}</i></b>
+        </progressbar>
+    </div>
+</div>
