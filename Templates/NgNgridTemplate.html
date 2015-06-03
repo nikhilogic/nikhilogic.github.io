@@ -134,10 +134,10 @@
                                 <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">
                                     <span class="glyphicon" ng-class="c.GlyphFn(row)"></span>
                                 </span>
-                                <select ng-if="o.SelectValue != null" class="form-control" ng-model="row[c.Name]" ng-options="o[c.SelectValue]  for o in  c.SelectFn(row)  track by o[c.SelectKey]" ng-change="row.isNgngridDirty=true" required>
+                                <select ng-if="c.SelectValue != null" class="form-control" ng-model="row[c.Name]" ng-options="o[c.SelectValue]  for o in  c.SelectFn(row)  track by o[c.SelectKey]" ng-change="row.isNgngridDirty=true" required>
                                     <option value="">Select</option>
                                 </select>
-                                <select ng-if="o.SelectValue == null" class="form-control" ng-model="row[c.Name]" ng-options="o  for o in  c.SelectFn(row)  track by o" ng-change="row.isNgngridDirty=true" required>
+                                <select ng-if="c.SelectValue == null" class="form-control" ng-model="row[c.Name]" ng-options="o  for o in  c.SelectFn(row)  track by o" ng-change="row.isNgngridDirty=true" required>
                                     <option value="">Select</option>
                                 </select>
                             </span>
@@ -205,8 +205,12 @@
                                         <span class="input-group">
                                             <span ng-show="childCol.ClassFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
                                                 <span class="glyphicon" ng-class="childCol.GlyphFn(row)"></span>
-                                            </span>
-                                            <select name="status" ng-disabled="childCol.DisableFn(childRow)" class="form-control" ng-model="childRow[childCol.Name]" ng-options="o[childCol.SelectValue]  for o in  childCol.SelectFn(childRow)  track by o[childCol.SelectKey]" ng-change="childRow.isNgngridDirty=true" required>
+                                            </span>                                         
+
+                                            <select ng-if="childCol.SelectValue != null"  name="status" ng-disabled="childCol.DisableFn(childRow)" class="form-control" ng-model="childRow[childCol.Name]" ng-options="o[childCol.SelectValue]  for o in  childCol.SelectFn(childRow)  track by o[childCol.SelectKey]" ng-change="childRow.isNgngridDirty=true" required>
+                                                <option value="">Select</option>
+                                            </select>
+                                            <select ng-if="childCol.SelectValue == null" name="status" ng-disabled="childCol.DisableFn(childRow)" class="form-control" ng-model="childRow[childCol.Name]" ng-options="o  for o in  childCol.SelectFn(childRow)  track by o" ng-change="childRow.isNgngridDirty=true" required>
                                                 <option value="">Select</option>
                                             </select>
                                         </span>
