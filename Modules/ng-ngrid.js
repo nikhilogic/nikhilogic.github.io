@@ -379,6 +379,73 @@ angular.module('ngNgrid', [])
             }
             scope.allRowsSelected = !scope.allRowsSelected;
         }
+
+        
+        scope.on_fileUpload = function (element) {            
+            //logDebug(element.files);
+            scope.files = [];
+            for (var i = 0; i < element.files.length; i++) {
+                //scope.rows.push(element.files[i]);
+                //logDebug('raw file' + element.files[i]);
+                var reader = new FileReader();
+                reader.readAsText(element.files[i]);               
+
+                reader.onload = function (e) {
+                    //logDebug(reader.result);
+                    var arrRows = angular.fromJson(reader.result);
+                    var colDates = [];
+                    //do we have any date columns?
+                    for (var c = 0; c < scope.columnDefinitions.length; c++) {
+                        if (scope.columnDefinitions[c].Type == 'Date') {
+                            logDebug('found date column' + scope.columnDefinitions[c].Name);
+                            colDates.push(scope.columnDefinitions[c].Name);
+                        }
+                    }
+
+                    for (var j = 0; j < arrRows.length; j++) {
+                        //check for any date objects
+                        for (var c = 0; c < colDates.length; c++) {
+                            if (arrRows[j][colDates[c]] != null) {
+                                logDebug('seeting new date');
+                                arrRows[j][colDates[c]] = new Date(arrRows[j][colDates[c]]);
+                            }
+                        }
+                        scope.rows.unshift(arrRows[j]);
+                    }
+                    
+                    scope.$apply();                  
+                    
+                }
+
+                
+            }
+        };
+
+
+        scope.importFromJson = function () {
+            var fileUpload = document.getElementById("fileUploadJson");
+            fileUpload.click();
+        }
+
+        scope.isAnyRowSelected = function () {
+            for (var i = 0; i < scope.rows.length; i++) {
+                if (scope.rows[i].isNgngridSelected) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        scope.exportSelectedToJson = function () {
+            var selectedRows = [];
+            for (var i = 0; i < scope.rows.length; i++) {
+                if (scope.rows[i].isNgngridSelected) {
+                    selectedRows.push(scope.rows[i]);
+                }
+            }
+            var blobObject = new Blob([angular.toJson(selectedRows)]);  //Blob(JSON.stringify(scope.rows));
+            window.navigator.msSaveBlob(blobObject, 'ngNGridExport.json'); // The user only has the option of clicking the Save button.            
+        }
+
     }
 
     return {
@@ -410,4 +477,5 @@ angular.module('ngNgrid', [])
     return function (input, start) {
         return input.slice(start);
     };
-});
+})
+

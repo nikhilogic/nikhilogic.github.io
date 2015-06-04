@@ -132,7 +132,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    DisplayName: 'Number Column',
                    ClassFn: function (r) { return 'text-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-bishop'; },
-                   BadgeFn: function (r) { return r[this.Name].length; }
+                   BadgeFn: function (r) { return r[this.Name].toString().length; }
                },                            
                {
                    Name: 'Col5Date',
@@ -140,14 +140,17 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    Type: 'Date',
                    ClassFn: function (r) { return 'text-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-knight'; },
-                   BadgeFn: function (r) { return r[this.Name].length; }
+                   BadgeFn: function (r) {                       
+                       return r[this.Name].toString().length;
+                   },
+                   DateFormatFn : function(r){ return  'yyyy-MM-dd HH:mm:ss';}
                },
                {
                    Name: 'Col6Link',
                    DisplayName: 'Link Column',
                    Type: 'Link',
                    ClassFn: function (r) { return 'text-default'; },
-                   UrlFn: function (r) { return 'https://github.com/nikhilogic/ngNGrid'; },
+                   UrlFn: function (r) { return 'https://github.com/nikhilogic/nikhilogic.github.io'; },
                    TextFn: function (r) { return 'NgNGrid' },
                    GlyphFn: function (r) { return 'glyphicon-tower'; },
                    BadgeFn: function (r) { return r[this.Name].length; }
@@ -156,8 +159,8 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    Name: 'Col7Input',
                    DisplayName: 'Input Column',                   
                    ClassFn: function (r) { return 'label-warning'; },
-                   //GlyphFn: function (r) { return 'glyphicon-queen' },
-                   //TooltipFn: function (r) { return 'asd'; },
+                   GlyphFn: function (r) { return 'glyphicon-queen' },
+                   TooltipFn: function (r) { return 'asd'; },
                    Type:'Input'
                }
                ,
@@ -166,6 +169,8 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    DisplayName: 'Select Column',
                    Type: 'Select',
                    SelectFn: function (row) { return $scope.optionList; },
+                   ClassFn: function (r) { return 'label-warning'; },
+                   GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
                    SelectValue: 'myVal',
                    SortProperty: 'myVal'
