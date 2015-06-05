@@ -20,7 +20,7 @@ TODO: format this later
                    
         PropertyName: 'Comments',
         DisplayName: 'Comments',
-        Type: 'Button',                   
+        ColumnType: 'Button',                   
 
         DisableSort: true,
         SortProperty: 'length',
@@ -54,7 +54,7 @@ angular.module('ngNgrid', [])
     function link(scope, element, attrs) {
         scope.pageSizeOptions = [10, 15, 20, 50, 100, 500, 1000];
         scope.gridCurrentPage = 1;
-        scope.gridPageSize = 15;
+        //scope.gridPageSize = 15;
         scope.gridChildrenSortOrder = false;
         scope.gridChildrenSortColumn = '';
         scope.customFilter = [];
@@ -380,15 +380,15 @@ angular.module('ngNgrid', [])
             scope.allRowsSelected = !scope.allRowsSelected;
         }
 
-        
-        scope.on_fileUpload = function (element) {            
+
+        scope.on_fileUpload = function (element) {
             //logDebug(element.files);
             scope.files = [];
             for (var i = 0; i < element.files.length; i++) {
                 //scope.rows.push(element.files[i]);
                 //logDebug('raw file' + element.files[i]);
                 var reader = new FileReader();
-                reader.readAsText(element.files[i]);               
+                reader.readAsText(element.files[i]);
 
                 reader.onload = function (e) {
                     //logDebug(reader.result);
@@ -412,12 +412,12 @@ angular.module('ngNgrid', [])
                         }
                         scope.rows.unshift(arrRows[j]);
                     }
-                    
-                    scope.$apply();                  
-                    
+
+                    scope.$apply();
+
                 }
 
-                
+
             }
         };
 

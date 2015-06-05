@@ -12,18 +12,24 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
         $scope.gridbottomids = ['ftr1'];
         $scope.data = [];    
         $scope.loadingRecords = true;
+        $scope.variety = 1;
         $scope.loadRows = function () {
+            var v = 0;
             for (var i = 0; i < 100; i++) {
+                if (v > $scope.variety) {
+                    v = 0;
+                }
                 $scope.data.push(
                      {
-                         Col1String: 'asd' + i,
-                         Col2Label: 'lbl' + i,
-                         Col3Collection: ['asdasd', 'asdasdasdasdqw'],
-                         Col4Number: i,
+                         Col1String: 'String data ' + v,
+                         Col2Label: 'Label data ' + v,
+                         Col3Button: 'Button data',
+                         Col4Number: v,
                          Col5Date: dt,
                          Col6Link: 'somelink',
                          Col7Input: 'Edit me',
                          Col8Select: { myKey: '222', myVal: '222Value' },
+                         Col9Complex : { myId:1, myColor:'default'},
                          Children1: [
                              {
                                  ChildCol1String: 'childstringval1',
@@ -46,6 +52,8 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                          ]
                      }
                 );
+                v += 1;
+                dt.setDate(dt.getDate() + 1);
             }
             $scope.loadingRecords = false;
         }
@@ -65,7 +73,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
             {
                 Name: 'ChildCol2Label',
                 DisplayName: 'Label Child1 Column',
-                Type: 'Label',
+                ColumnType: 'ngNGridLabel',
                 ClassFn: function (r) { return 'label-warning'; },
                 GlyphFn: function (r) { return 'glyphicon-queen'; },
                 TooltipFn: function (r) { return 'asd'; },
@@ -82,7 +90,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
            {
                Name: 'Child2Col2Label',
                DisplayName: 'Label Child2 Column',
-               Type: 'Label',
+               ColumnType: 'ngNGridLabel',
                ClassFn: function (r) { return 'label-danger'; },
                GlyphFn: function (r) { return 'glyphicon-queen'; },
                TooltipFn: function (r) { return 'asd'; },
@@ -95,25 +103,25 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
         $scope.columnDefs = [
                {
                    Name: 'Col1String',
-                   DisplayName: 'String Column',
+                   DisplayName: 'String(Default Type) Column',
                    GlyphFn: function (r) { return 'glyphicon-king'; },
                    BadgeFn: function (r) { return r[this.Name].length; },
                    ClassFn: function (r) { return 'text-primary'; }
                },
                {
                    Name: 'Col2Label',
-                   DisplayName: 'Label Column',
-                   Type: 'Label',
-                   ClassFn: function (r) { return 'label-info'; },
+                   DisplayName: 'ngNGridLabel Column',
+                   ColumnType: 'ngNGridLabel',
+                   ClassFn: function (r) { return (r[this.Name] == 'Label data 0') ? 'label-info':'label-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    TooltipFn: function (r) { return 'asd'; },                   
-                   FilterClassFn: function (c) { return 'label-primary'; },
+                   FilterClassFn: function (c) { return (c == 'Label data 0') ? 'label-info' : 'label-warning'; },
                    BadgeFn: function (r) { return r[this.Name].length; }
                },
                {
-                   Name: 'Col3Collection',
-                   DisplayName: 'Button Column',
-                   Type: 'Button',
+                   Name: 'Col3Button',
+                   DisplayName: 'ngNGridButton Column',
+                   ColumnType: 'ngNGridButton',
                    ClassFn: function (r) { return 'btn-success'; },
                    GlyphFn: function (r) { return 'glyphicon-pawn'; },
                    TooltipFn: function (r) { return 'some tool-tip'; },
@@ -124,7 +132,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                        },5000);
                    },
                    SortProperty: 'length',
-                   DisableFilter: true,
+                   DisableFilter: true,                   
                    BadgeFn: function (r) { return r[this.Name].length; }
                },
                {
@@ -136,19 +144,17 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                },                            
                {
                    Name: 'Col5Date',
-                   DisplayName: 'Date Column',
-                   Type: 'Date',
+                   DisplayName: 'ngNGridDate Column',
+                   ColumnType: 'ngNGridDate',
                    ClassFn: function (r) { return 'text-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-knight'; },
-                   BadgeFn: function (r) {                       
-                       return r[this.Name].toString().length;
-                   },
+                   BadgeFn: function (r) {return r[this.Name].toString().length;},
                    DateFormatFn : function(r){ return  'yyyy-MM-dd HH:mm:ss';}
                },
                {
                    Name: 'Col6Link',
-                   DisplayName: 'Link Column',
-                   Type: 'Link',
+                   DisplayName: 'ngNGridLink Column',
+                   ColumnType: 'ngNGridLink',
                    ClassFn: function (r) { return 'text-default'; },
                    UrlFn: function (r) { return 'https://github.com/nikhilogic/nikhilogic.github.io'; },
                    TextFn: function (r) { return 'NgNGrid' },
@@ -157,23 +163,33 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                },
                {
                    Name: 'Col7Input',
-                   DisplayName: 'Input Column',                   
+                   DisplayName: 'ngNGridInput Column',
                    ClassFn: function (r) { return 'label-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    TooltipFn: function (r) { return 'asd'; },
-                   Type:'Input'
+                   ColumnType: 'ngNGridInput'
                }
                ,
                {
                    Name: 'Col8Select',
-                   DisplayName: 'Select Column',
-                   Type: 'Select',
+                   DisplayName: 'ngNGridSelect Column',
+                   ColumnType: 'ngNGridSelect',
                    SelectFn: function (row) { return $scope.optionList; },
-                   ClassFn: function (r) { return 'label-warning'; },
+                   ClassFn: function (r) { return 'label-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
                    SelectValue: 'myVal',
                    SortProperty: 'myVal'
+               },
+               {
+                   Name: 'Col9Complex',
+                   DisplayName: 'Complex Object Column',
+                   ColumnType: 'ngNGridLabel',                   
+                   ClassFn: function (r) { return 'label-' + r[this.Name].myColor; },
+                   GlyphFn: function (r) { return 'glyphicon-queen' },                   
+                   SortProperty: 'myColor',
+                   TextFn: function (r) { return 'This is object with myId: ' + r[this.Name].myId + ' and myColor:' + r[this.Name].myColor; },
+                   FilterClassFn: function (c) { return 'label-'+ c; },
                }
         ];
 
