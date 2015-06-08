@@ -18,7 +18,7 @@ TODO: format this later
 
 
 
-angular.module('ngNgrid', [])
+angular.module('ngNgrid', ['ui.bootstrap'])
 .directive('ngNgrid', function ($filter, $window, $timeout) {
 
     function link(scope, element, attrs) {

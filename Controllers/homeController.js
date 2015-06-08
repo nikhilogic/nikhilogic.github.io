@@ -1,4 +1,4 @@
-﻿var appNgNgrid = angular.module('NgNgridApp', ['ui.bootstrap', 'ngNgrid']);
+﻿var appNgNgrid = angular.module('NgNgridApp', ['ngNgrid']);
 appNgNgrid.controller('HomeController', ['$scope','$timeout',
     function ($scope, $timeout) {
 

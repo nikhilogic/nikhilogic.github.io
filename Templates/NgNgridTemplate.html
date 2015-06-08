@@ -77,15 +77,15 @@
                             </button>
                         </span>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu" style="overflow-y:auto;height:300px;width:auto">
-
+                            <li> &nbsp;<small style="color:gray">*Type and hit Enter to apply below filters</small> &nbsp;</li>
                             <li class="divider"></li>
                             <li>
                                 <span class="input-group input-group-sm">
                                     &nbsp;
                                     <span class="glyphicon" ng-class="isColFilterApplied(c)?'glyphicon-check':'glyphicon-unchecked'" style="cursor: pointer" ng-click="toggleColFilters(c);$event.stopPropagation()"></span>
-                                    <span>Select/Unselect All</span>
+                                    <span>Select/Unselect All</span>                                    
                                 </span>
-                            </li>
+                            </li>                            
                             <li class="divider"></li>
                             <li ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false">
                                 <div>
@@ -113,7 +113,7 @@
                     </span>
                 </td>
                 <td ng-show="showRowNumbers">{{$index+1}}</td>
-                <td ng-show="showRowSelector" ng-click="row.isNgngridSelected = !row.isNgngridSelected" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect Agent">
+                <td ng-show="showRowSelector" ng-click="row.isNgngridSelected = !row.isNgngridSelected" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect Row">
                     <span class="glyphicon" ng-class="row.isNgngridSelected ?  'glyphicon-check': 'glyphicon-unchecked'"></span>
                 </td>
                 <td ng-repeat="c in columnDefinitions" ng-class="c.CellClassFn(row)" ng-hide="c.isNgngridColumnHide">
