@@ -13,37 +13,7 @@ TODO: format this later
             gridFilters: '=',
             showRowNumbers: '=',
             gridHeightFixed: '=',
-            gridHeightStretchBottomOffset: '='
-
-
- Documentation for Column Definitions
-                   
-        PropertyName: 'Comments',
-        DisplayName: 'Comments',
-        ColumnType: 'Button',                   
-
-        DisableSort: true,
-        SortProperty: 'length',
-
-        DisableFilter: false,
-        FilterClassFn: function (distinctItem) { return 'label-warning'; },
-        FilterTextFn: function(r) {return "ASD";},   
-        FilterGlyphFn: function (r) { return 'glyphicon-comment'; },
-        FilterTooltipFn: function (r) { return 'Click to open/add comments'; },
-
-        TextFn: function(r) {return "ASD";},   
-        ClassFn: function (r) { return 'btn-default'; },
-        GlyphFn: function (r) { return 'glyphicon-comment'; },
-        TooltipFn: function (r) { return 'Click to open/add comments'; },        
-        BadgeFn : function(r) {return '1';}
-        DisableFn: function(r) {return 'asd';},
-        ClickFn: $scope.onCommentsClicked                   
-
-
-        TODO: filter blanks?
-        date range
-        scroll rows only
-                   
+            gridHeightStretchBottomOffset: '='                   
  */
 
 
@@ -53,14 +23,18 @@ angular.module('ngNgrid', [])
 
     function link(scope, element, attrs) {
         scope.pageSizeOptions = [10, 15, 20, 50, 100, 500, 1000];
-        scope.gridCurrentPage = 1;
-        //scope.gridPageSize = 15;
+        scope.gridCurrentPage = 1;        
         scope.gridChildrenSortOrder = false;
         scope.gridChildrenSortColumn = '';
         scope.customFilter = [];
         scope.customFilter.ColumnFilters = [];
         scope.filterSelectionList = [];
+        scope.distinctLists = [];
 
+        /*
+         * Grid scrolling
+         * Sets the scroll area as per the stretch bottom offset or fixed height defined 
+         */
         scope.setGridTableStyle = function () {
             var topPosition = document.getElementById('ngGridToolbar').getBoundingClientRect().bottom;
             var bottomPosition = 0;
@@ -73,32 +47,52 @@ angular.module('ngNgrid', [])
             return { top: topPosition + 'px', bottom: bottomPosition + 'px' };
         };
 
+        /*
+         * Grid paging
+         * Calculates the total number of pages to set in the pagination control
+         */
         scope.gridTotalPages = function () {
             return Math.ceil(scope.rows.length / scope.gridPageSize);
-        }
+        }         
 
-        scope.canShowGroup = function () {
-            return true;
-        }
-
+        /*
+         * Grid Sorting
+         * Toggles the sort on user interaction
+         */
         scope.changeSort = function (sortCol) {
             scope.gridSortOrder = !scope.gridSortOrder;
             scope.gridSortColumn = scope.getSortProperty(sortCol);
         }
 
-        scope.isSorted = function (sortCol) {
-            return (scope.gridSortColumn == scope.getSortProperty(sortCol));
-        }
-
+        /*
+         * Grid Sorting
+         * Toggle the sort on the child tables
+         */
         scope.changeChildSort = function (sortCol) {
             scope.gridChildrenSortOrder = !scope.gridChildrenSortOrder;
             scope.gridChildrenSortColumn = scope.getSortProperty(sortCol);
         }
 
+        /*
+         * Grid Sorting
+         * Checks if the column is sorted to render the glyph icon indicators
+         */
+        scope.isSorted = function (sortCol) {
+            return (scope.gridSortColumn == scope.getSortProperty(sortCol));
+        }
+        
+        /*
+         * Grid Sorting
+         * Checks if the child column is sorted to render the glyph icon indicators
+         */
         scope.isChildSorted = function (sortCol) {
             return (scope.gridChildrenSortColumn == scope.getSortProperty(sortCol));
         }
 
+        /*
+         * Grid Sorting
+         * Gets the sort property set on the column. Default sort property is the column Name property
+         */
         scope.getSortProperty = function (col) {
             var colName = null;
             if (col.SortProperty != null) {
@@ -110,33 +104,37 @@ angular.module('ngNgrid', [])
             return colName;
         }
 
-        scope.getValueFromProp = function (objValue, propString) {
-            var tempSortProp = null;
+        /*
+         * Grid Row function
+         * Gets the value of the property in an object "O" from a specified string  in "A.B.C" format in O["A"]["B"]["C"] 
+         */
+        scope.getValueFromPropertyString = function (targetObject, propString) {
+            var objValue = null;
             if (propString != null) {
                 var arrSplitSortProp = propString.split('.');
                 for (var i = 0; i < arrSplitSortProp.length; i++) {
                     if (i == 0) {
-                        tempSortProp = objValue[arrSplitSortProp[i]];
+                        objValue = targetObject[arrSplitSortProp[i]];
                     }
-                    else if (tempSortProp == null) {
+                    else if (objValue == null) {
                         break;
                     }
                     else {
-                        tempSortProp = tempSortProp[arrSplitSortProp[i]];
+                        objValue = objValue[arrSplitSortProp[i]];
                     }
                 }
             }
-            return tempSortProp;
+            return objValue;
         }
 
         scope.getChildRows = function (row, childColName) {
-            return scope.getValueFromProp(row, childColName);
+            return scope.getValueFromPropertyString(row, childColName);
         }
 
         scope.childRowsCount = function (row) {
             var childRecCount = 0;
             for (var i = 0; i < scope.childPropertynames.length; i++) {
-                var tempChildRows = scope.getValueFromProp(row, scope.childPropertynames[i]);
+                var tempChildRows = scope.getValueFromPropertyString(row, scope.childPropertynames[i]);
                 childRecCount += tempChildRows ? tempChildRows.length : 0;
             }
             return childRecCount;
@@ -146,7 +144,7 @@ angular.module('ngNgrid', [])
             var val = null;
             if (row[col.Name] != null) {
                 if (col.SortProperty != null) {
-                    val = scope.getValueFromProp(row[col.Name], col.SortProperty);
+                    val = scope.getValueFromPropertyString(row[col.Name], col.SortProperty);
                 }
                 else {
                     val = row[col.Name];
@@ -169,129 +167,145 @@ angular.module('ngNgrid', [])
             distinctValues.sort();
             return distinctValues;
         };
+            
 
-        scope.distinctColValues = function (col) {
+        /*
+         * Grid Filters
+         * Gets the distinct values in the rows for that column. The distinct Value is an object with three properties :
+         *  1. DistinctValue -  which is the actual value of the object property in the row
+         *  2. DistinctCount - count of the distinct value (grouping)
+         *  3. DisplayValue -  How the value is displayed in the filter
+         */
+        scope.distinctColValues = function (col, rowSet) {            
             var distinctValues = [];
-            var colName = scope.getSortProperty(col);
-            for (i = 0, len = scope.rows.length ; i < len; i++) {
-                var colValue = scope.getColValue(col, scope.rows[i]);
-                if (colValue != null) {
-                    if (distinctValues.indexOf(colValue) == -1) {
-                        distinctValues.push(colValue);
+            //Iterate over the rows for that column to group distinct values
+            for (i = 0, len = rowSet.length ; i < len; i++) {                
+                var colValue = scope.getColValue(col, rowSet[i]);
+                if (colValue != null) {                    
+                    var matchFound = false;
+                    //look for colValue in DistinctValue
+                    for (var j = 0; j < distinctValues.length; j++) {
+                        if (distinctValues[j].DistinctValue == colValue) {
+                            //Value already exists; so increment the counter in the distinctValues array for that value.
+                            matchFound = true;
+                            distinctValues[j].DistinctCount += 1;
+                            break;
+                        }
+                    }
+                    if (!matchFound) {
+                        //new value found add to the distinctValues array
+                        var colDisplayValue = col.FilterTextFn ? col.FilterTextFn({ DistinctValue: colValue, DistinctCount: -1 }) : colValue;
+                        if (col.ColumnType == 'ngNGridDate') {
+                            colDisplayValue = $filter('date')(colDisplayValue, col.FilterDateFormatFn(null));
+                        }
+                        
+                        distinctValues.push({ DistinctValue: colValue, DistinctCount: 1, DisplayValue: colDisplayValue });
                     }
                 }
-            }
-            distinctValues.sort();
-            return distinctValues;
+            }            
+            return distinctValues;            
         };
-        scope.iCounter = 0
-        scope.distinctColValuesFiltered = function (col) {
-            //logDebug('distinctColValuesFiltered ' + scope.iCounter++);
-            var colName = scope.getSortProperty(col);
-            var filteredList = [];
+
+               
+
+        /*
+        * Grid Filters
+        * Sets the distinct values for the list in the column on expanding the filter menu
+        */        
+        scope.setDistinctColValuesFiltered = function (col) {
+            var colName = scope.getSortProperty(col);            
             var filteredRows = scope.gridFilteredRows;
-
+            //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
             if (filteredRows.length == scope.rows.length || (scope.customFilter.ColumnFilters[colName] != null && scope.customFilter.ColumnFilters[colName].IsFirstFilter)) {
-                filteredList = scope.distinctColValues(col);
+                scope.distinctLists[colName] = scope.distinctColValues(col, scope.rows);
             }
-            else if (scope.isColNameFilterApplied(colName)) {
-                //Filtered applied to me-  and I am not the first filter
-                //check to see if I have saved the list 
-                filteredList = scope.filterSelectionList[colName];
-            }
-            else {
-                //in these filtered rows find current col values
-                for (var i = 0; i < filteredRows.length; i++) {
-                    var temp = scope.getColValue(col, filteredRows[i]);
-
-                    if (filteredList.indexOf(temp) <= -1) {
-                        filteredList.push(temp);
-                    }
-                }
-                scope.filterSelectionList[colName] = filteredList;
-            }
-            return filteredList;
+            else if (!scope.isColNameFilterApplied(colName)) {
+                // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
+                scope.distinctLists[colName] = scope.distinctColValues(col, filteredRows);
+            }            
         }
-
-        scope.clearColFilters = function (colName) {
-            delete scope.customFilter.ColumnFilters[colName];
-        }
-
+        
+        /*
+        * Grid Filters
+        * Toggle column filters
+        */   
         scope.toggleColFilters = function (col) {
             var colName = scope.getSortProperty(col);
+            //if Filter is already applied clear the filters
             if (scope.isColNameFilterApplied(colName)) {
                 //clear all filters
-                scope.clearColFilters(colName);
+                delete scope.customFilter.ColumnFilters[colName];
                 scope.gridFiltersChanged({ filterColumnName: colName, filterString: '', isAdded: false });
             }
             else {
-                //select all values which are filtered in drop down list                
-                for (var i = 0; i < col.DropdownFilteredValues.length; i++) {
-                    scope.addColumnFilter(col, col.DropdownFilteredValues[i], true);
-                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: col.DropdownFilteredValues[i], isAdded: true });
+                //apply the filters for all values which are filtered in drop down list                
+                for (var i = 0; i < col.DropdownFilteredObjects.length; i++) {
+                    scope.addColumnFilter(col, col.DropdownFilteredObjects[i].DistinctValue);
+                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: col.DropdownFilteredObjects[i].DistinctValue, isAdded: true });
                 }
             }
         }
 
+
+        /*
+         * Grid Filters
+         * Event for the parent control to set the filters
+         */
         scope.$on('ngNGrid_FilterChange', function (event, filterCol, filterString) {
-            scope.addColumnFilter(filterCol, filterString, true);
+            scope.addColumnFilter(filterCol, filterString);
         });
 
-        scope.addColumnNameFilter = function (colName, filterString, allowMultiple) {
+        /*
+         * Grid Filters
+         * Sets or removes the filters for columns
+         */
+        scope.addColumnFilter = function (col, filterString) {            
             if (filterString != null) {
+                var colName = scope.getSortProperty(col);
                 filterString = filterString.toString().trim().toLowerCase();
+                //Is this the first filter?
                 var firstFilter = false;
                 if (Object.keys(scope.customFilter.ColumnFilters).length <= 0) {
                     firstFilter = true;
                 }
+                //initialise the ColumnFilter object
                 if (scope.customFilter.ColumnFilters[colName] == null) {
                     scope.customFilter.ColumnFilters[colName] = [];
                 }
-                if (allowMultiple) {
-                    var posFilter = scope.customFilter.ColumnFilters[colName].indexOf(filterString);
-                    if (posFilter == -1) {
+                //Does the filter exists -if it exists toggle it . if it dosent then add it               
+                var posFilter = scope.customFilter.ColumnFilters[colName].indexOf(filterString);
+                if (posFilter == -1) {
 
-                        //item  not found - add it
-                        scope.customFilter.ColumnFilters[colName].push(filterString);
-                        //Is this column already the FirstFilter?
-                        if (!scope.customFilter.ColumnFilters[colName].IsFirstFilter) {
-                            scope.customFilter.ColumnFilters[colName].IsFirstFilter = firstFilter;
-                        }
-                        scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: true });
-                    }
-                    else {
-
-                        //item exists toggle - remove it
-                        scope.customFilter.ColumnFilters[colName].splice(posFilter, 1);
-                        if (scope.customFilter.ColumnFilters[colName].length == 0) {
-                            delete scope.customFilter.ColumnFilters[colName];
-                            //set the first filter to the next immediate column
-                            for (var cFilter in scope.customFilter.ColumnFilters) {
-                                if (scope.isColNameFilterApplied(cFilter)) {
-                                    scope.customFilter.ColumnFilters[cFilter].IsFirstFilter = true;
-                                    break;
-                                }
-                            }
-                        }
-                        scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: false });
-                    }
-                }
-                else {
-                    scope.customFilter.ColumnFilters[colName] = [filterString];
-                    if (filterString == '') {
-                        scope.customFilter.ColumnFilters[colName].IsFirstFilter = false;
-                    }
-                    else {
+                    //item  not found - add it
+                    scope.customFilter.ColumnFilters[colName].push(filterString);
+                    //Is this column already the FirstFilter?
+                    if (!scope.customFilter.ColumnFilters[colName].IsFirstFilter) {
                         scope.customFilter.ColumnFilters[colName].IsFirstFilter = firstFilter;
                     }
+                    //notify hosting control that filters have changed
+                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: true });
                 }
+                else {
+
+                    //item exists toggle - remove it
+                    scope.customFilter.ColumnFilters[colName].splice(posFilter, 1);
+                    if (scope.customFilter.ColumnFilters[colName].length == 0) {
+                        delete scope.customFilter.ColumnFilters[colName];
+                        //set the first filter to the next immediate column
+                        for (var cFilter in scope.customFilter.ColumnFilters) {
+                            if (scope.isColNameFilterApplied(cFilter)) {
+                                scope.customFilter.ColumnFilters[cFilter].IsFirstFilter = true;
+                                break;
+                            }
+                        }
+                    }
+                    //notify hosting control that filters have changed
+                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: false });
+                }
+                               
             }
         }
-
-        scope.addColumnFilter = function (col, filterString, allowMultiple) {
-            var colName = scope.getSortProperty(col);
-            scope.addColumnNameFilter(colName, filterString, allowMultiple);
-        }
+            
 
         scope.isColFilterApplied = function (col) {
             var colName = scope.getSortProperty(col);
@@ -382,42 +396,39 @@ angular.module('ngNgrid', [])
 
 
         scope.on_fileUpload = function (element) {
-            //logDebug(element.files);
+            var rowsToImport = [];
             scope.files = [];
-            for (var i = 0; i < element.files.length; i++) {
-                //scope.rows.push(element.files[i]);
-                //logDebug('raw file' + element.files[i]);
+            for (var i = 0; i < element.files.length; i++) {                
                 var reader = new FileReader();
                 reader.readAsText(element.files[i]);
-
-                reader.onload = function (e) {
-                    //logDebug(reader.result);
+                reader.onload = function (e) {                    
                     var arrRows = angular.fromJson(reader.result);
                     var colDates = [];
                     //do we have any date columns?
                     for (var c = 0; c < scope.columnDefinitions.length; c++) {
-                        if (scope.columnDefinitions[c].Type == 'Date') {
-                            logDebug('found date column' + scope.columnDefinitions[c].Name);
+                        if (scope.columnDefinitions[c].Type == 'Date') {                            
                             colDates.push(scope.columnDefinitions[c].Name);
                         }
                     }
-
                     for (var j = 0; j < arrRows.length; j++) {
                         //check for any date objects
                         for (var c = 0; c < colDates.length; c++) {
-                            if (arrRows[j][colDates[c]] != null) {
-                                logDebug('seeting new date');
+                            if (arrRows[j][colDates[c]] != null) {                                
                                 arrRows[j][colDates[c]] = new Date(arrRows[j][colDates[c]]);
                             }
                         }
-                        scope.rows.unshift(arrRows[j]);
+                        rowsToImport.push(arrRows[j]);
+                        //scope.rows.unshift(arrRows[j]);
                     }
-
-                    scope.$apply();
-
+                    //allow hosting control to override it
+                    scope.onDataImport(rowsToImport, cancel);
+                    if (!cancel) {
+                        for (var k = 0; k < rowsToImport.length; k++) {
+                            scope.rows.unshift(rowsToImport[k]);
+                        }
+                        scope.$apply();
+                    }
                 }
-
-
             }
         };
 
@@ -442,10 +453,27 @@ angular.module('ngNgrid', [])
                     selectedRows.push(scope.rows[i]);
                 }
             }
-            var blobObject = new Blob([angular.toJson(selectedRows)]);  //Blob(JSON.stringify(scope.rows));
-            window.navigator.msSaveBlob(blobObject, 'ngNGridExport.json'); // The user only has the option of clicking the Save button.            
+            scope.onDataExport(selectedRows, cancel);
+            if (!cancel) {
+                var blobObject = new Blob([angular.toJson(selectedRows)]);
+                window.navigator.msSaveBlob(blobObject, 'ngNGridExport.json'); // The user only has the option of clicking the Save button.            
+            }            
         }
 
+        scope.ondropDownToggle = function (c, e) {            
+            if (c.isNgngridDropdownOpen) {                
+                scope.setDistinctColValuesFiltered(c);
+                $timeout(function () { document.getElementById(e).focus(); }, 100);
+            }
+        }
+
+        scope.dropdownFilterKeyPress = function (event,c) {
+            if (event.keyCode == 13) {
+                scope.toggleColFilters(c);
+                c.isNgngridDropdownOpen = false;
+            }
+
+        }
     }
 
     return {
@@ -465,7 +493,9 @@ angular.module('ngNgrid', [])
             showRowSelector: '=',
             gridHeightFixed: '=',
             gridHeightStretchBottomOffset: '=',
-            gridFiltersChanged: '&'
+            gridFiltersChanged: '&',
+            onDataImport: '&',
+            onDataExport: '&'
         },
         templateUrl: '../Templates/NgNgridTemplate.html',
         link: link

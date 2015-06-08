@@ -13,7 +13,7 @@
                         
             <!--<table>
                 <tr ng-repeat="c in columnDefs" >
-                    <td ng-repeat="(key,value) in c | function(value,index) { return value.indexOf('Fn')==-1;}"><label class="label label-default">{{key}}</label></td>                   
+                    <td ng-repeat="(key,value) in c | filter:filterColumnDemo(key,value)"><label class="label label-default">{{key}}</label></td>                   
                 </tr>
             </table>-->
 
