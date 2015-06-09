@@ -79,7 +79,7 @@
                         <input type="text" class="form-control" ng-model="dropDownFilterInput" ng-init="dropDownFilterInput=''" ng-focus="c.isNgNgridDropdownOpen=true" id="ngNgridDropdownFilter{{$index}}" ng-keypress="dropdownFilterKeyPress($event,c)" />
                         <span class="input-group-btn">
                             <button type="button" dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c) ? 'btn-primary':'btn-default'">
-                                <span class="caret"></span>
+                                <span class="glyphicon glyphicon-filter"></span>
                             </button>
                         </span>
                         <ul class="dropdown-menu" ng-class="$index==columnDefinitions.length-1 ? 'dropdown-menu-right' :''" role="menu" style="overflow-y:auto;max-height:500px;width:auto;overflow-x:auto">
@@ -154,11 +154,11 @@
                             {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </a>
-                        <span ng-switch-when="ngNGridInput" class="input-group">
-                            <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">
+                        <span ng-switch-when="ngNGridInput" ng-class="c.GlyphFn?'input-group':''">
+                            <span ng-show="c.GlyphFn" class="input-group-addon" ng-class="c.ClassFn(row)">
                                 <span class="glyphicon" ng-class="c.GlyphFn(row)"></span>
                             </span>
-                            <input class="form-control" ng-model="row[c.Name]" ng-readonly="c.DisabledFn(row)" ng-change="row.isNgNgridDirty=true" placeholder="{{c.NullOrEmptyFn(row)}}" />
+                            <input class="form-control" ng-model="row[c.Name]" ng-readonly="c.DisabledFn(row)" ng-change="row.isNgNgridDirty=true" placeholder="{{c.NullOrEmptyFn(row)}}" type="{{c.InputTypeFn(row)}}" />
                         </span>
                         <span ng-switch-default ng-class="c.ClassFn ? c.ClassFn(row) : ''">
                             <span class="glyphicon {{c.GlyphFn(row)}}"></span>
@@ -220,11 +220,11 @@
                                         {{childCol.TextFn ?  childCol.TextFn(childRow) :  childRow[childCol.Name]}}
                                         <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
                                     </a>
-                                    <span ng-switch-when="ngNGridInput" class="input-group">
-                                        <span ng-show="childCol.ClassFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
+                                    <span ng-switch-when="ngNGridInput" ng-class="childCol.GlyphFn?'input-group':''">
+                                        <span ng-show="childCol.GlyphFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
                                             <span class="glyphicon" ng-class="childCol.GlyphFn(row)"></span>
                                         </span>
-                                        <input class="form-control" ng-model="childRow[childCol.Name]" ng-readonly="childCol.DisabledFn(childRow)" ng-change="childRow.isNgNgridDirty=true" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" />
+                                        <input class="form-control" ng-model="childRow[childCol.Name]" ng-readonly="childCol.DisabledFn(childRow)" ng-change="childRow.isNgNgridDirty=true" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" type="{{childCol.InputTypeFn(childRow)}}" />
                                     </span>
                                     <span ng-switch-default ng-class="childCol.ClassFn ? childCol.ClassFn(childRow) : ''">
                                         {{childCol.TextFn ?  childCol.TextFn(childRow) :  childRow[childCol.Name]}}
