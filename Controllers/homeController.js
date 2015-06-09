@@ -9,7 +9,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
         var d2 = new Date();
         d1.setDate(dt.getDate() + 1);
         d2.setDate(dt.getDate() + 2);
-        $scope.gridbottomids = ['ftr1'];
+        //$scope.gridbottomids = ['ftr1'];
         $scope.data = [];    
         $scope.loadingRecords = true;
         $scope.variety = 1;
@@ -103,7 +103,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
            {
                Name: 'Child2Col2Label',
                DisplayName: 'Label Child2 Column',
-               ColumnType: 'ngNGridLabel',
+               ColumnType: 'ngNGridInput',
                ClassFn: function (r) { return 'label-danger'; },
                GlyphFn: function (r) { return 'glyphicon-queen'; },
                TooltipFn: function (r) { return 'asd'; },
