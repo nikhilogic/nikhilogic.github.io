@@ -240,14 +240,17 @@ angular.module('ngNgrid', ['ui.bootstrap'])
             if (scope.isColNameFilterApplied(colName)) {
                 //clear all filters
                 delete scope.customFilter.ColumnFilters[colName];
-                scope.gridFiltersChanged({ filterColumnName: colName, filterString: '', isAdded: false });
+                scope.gridFiltersChanged({ filterColumnName: colName, filters: [''], isAdded: false });
             }
             else {
+                var filtersAdded = [];
                 //apply the filters for all values which are filtered in drop down list                
                 for (var i = 0; i < col.DropdownFilteredObjects.length; i++) {
                     scope.addColumnFilter(col, col.DropdownFilteredObjects[i].DistinctValue);
-                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: col.DropdownFilteredObjects[i].DistinctValue, isAdded: true });
+                    filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);                    
                 }
+                //notify parent control that filters have changed
+                scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersAdded, isAdded: true });
             }
         }
 
@@ -256,56 +259,71 @@ angular.module('ngNgrid', ['ui.bootstrap'])
          * Grid Filters
          * Event for the parent control to set the filters
          */
-        scope.$on('ngNGrid_FilterChange', function (event, filterCol, filterString) {
-            scope.addColumnFilter(filterCol, filterString);
+        scope.$on('ngNGrid_FilterChange', function (event, filterCol, filter) {
+            scope.addColumnFilter(filterCol, filter);
         });
 
         /*
          * Grid Filters
          * Sets or removes the filters for columns
          */
-        scope.addColumnFilter = function (col, filterString) {
-            if (filterString != null) {
+        scope.addColumnFilter = function (col, filter) {
+            if (filter != null) {
                 var colName = scope.getSortProperty(col);
-                filterString = filterString.toString().trim().toLowerCase();
-                //Is this the first filter?
-                var firstFilter = false;
-                if (Object.keys(scope.customFilter.ColumnFilters).length <= 0) {
-                    firstFilter = true;
-                }
-                //initialise the ColumnFilter object
-                if (scope.customFilter.ColumnFilters[colName] == null) {
-                    scope.customFilter.ColumnFilters[colName] = [];
-                }
-                //Does the filter exists -if it exists toggle it . if it dosent then add it               
-                var posFilter = scope.customFilter.ColumnFilters[colName].indexOf(filterString);
-                if (posFilter == -1) {
+                var filtersAdded = [];
+                var filtersRemoved = [];
+               
+                for (var i = 0; i < filter.length; i++) {
+                    
+                    var filterString = filter[i];
 
-                    //item  not found - add it
-                    scope.customFilter.ColumnFilters[colName].push(filterString);
-                    //Is this column already the FirstFilter?
-                    if (!scope.customFilter.ColumnFilters[colName].IsFirstFilter) {
-                        scope.customFilter.ColumnFilters[colName].IsFirstFilter = firstFilter;
+                    filterString = filterString.toString().trim().toLowerCase();
+                    //Is this the first filter?
+                    var firstFilter = false;
+                    if (Object.keys(scope.customFilter.ColumnFilters).length <= 0) {
+                        firstFilter = true;
                     }
-                    //notify hosting control that filters have changed
-                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: true });
-                }
-                else {
+                    //initialise the ColumnFilter object
+                    if (scope.customFilter.ColumnFilters[colName] == null) {
+                        scope.customFilter.ColumnFilters[colName] = [];
+                    }
+                    //Does the filter exists -if it exists toggle it . if it dosent then add it               
+                    var posFilter = scope.customFilter.ColumnFilters[colName].indexOf(filterString);
+                    if (posFilter == -1) {
 
-                    //item exists toggle - remove it
-                    scope.customFilter.ColumnFilters[colName].splice(posFilter, 1);
-                    if (scope.customFilter.ColumnFilters[colName].length == 0) {
-                        delete scope.customFilter.ColumnFilters[colName];
-                        //set the first filter to the next immediate column
-                        for (var cFilter in scope.customFilter.ColumnFilters) {
-                            if (scope.isColNameFilterApplied(cFilter)) {
-                                scope.customFilter.ColumnFilters[cFilter].IsFirstFilter = true;
-                                break;
+                        //item  not found - add it
+                        scope.customFilter.ColumnFilters[colName].push(filterString);
+                        //Is this column already the FirstFilter?
+                        if (!scope.customFilter.ColumnFilters[colName].IsFirstFilter) {
+                            scope.customFilter.ColumnFilters[colName].IsFirstFilter = firstFilter;
+                        }
+                        filtersAdded.push(filterString);                        
+                    }
+                    else {
+
+                        //item exists toggle - remove it
+                        scope.customFilter.ColumnFilters[colName].splice(posFilter, 1);
+                        if (scope.customFilter.ColumnFilters[colName].length == 0) {
+                            delete scope.customFilter.ColumnFilters[colName];
+                            //set the first filter to the next immediate column
+                            for (var cFilter in scope.customFilter.ColumnFilters) {
+                                if (scope.isColNameFilterApplied(cFilter)) {
+                                    scope.customFilter.ColumnFilters[cFilter].IsFirstFilter = true;
+                                    break;
+                                }
                             }
                         }
+                        filtersRemoved.push(filterString);                        
                     }
+                }
+
+                if (filtersAdded.length > 0) {
                     //notify hosting control that filters have changed
-                    scope.gridFiltersChanged({ filterColumnName: colName, filterString: filterString, isAdded: false });
+                    scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersAdded, isAdded: true });
+                }
+                if (filtersRemoved.length > 0) {
+                    //notify hosting control that filters have changed
+                    scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersRemoved, isAdded: false });
                 }
 
             }
@@ -337,7 +355,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
 
         scope.clearAllFilters = function () {
             scope.customFilter.ColumnFilters = [];
-            scope.gridFiltersChanged({ filterColumnName: '', filterString: '', isAdded: false });
+            scope.gridFiltersChanged({ filterColumnName: '', filters: [''], isAdded: false });
         }
 
         scope.anyFiltersExist = function () {
@@ -483,8 +501,31 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                 //sotpping enter from being propagated to parent dom elements.
                 event.preventDefault();
             }
+        }
 
+        scope.updateDateFilter = function (c, StartDate, EndDate) {
+            if (StartDate != null && EndDate != null) {
+                EndDate.setHours(23);
+                EndDate.setMinutes(59);
+                EndDate.setSeconds(59)
+                scope.updateRangeFilter(c, StartDate, EndDate);
+            }
+        }
 
+        scope.updateRangeFilter = function (c, StartRange, EndRange) {
+            if(StartRange != null && EndRange != null) {
+                var colName = scope.getSortProperty(c);
+                var distinctValues = scope.distinctLists[colName];
+                var colFilters =[];
+                for(var i = 0; i < distinctValues.length; i++) {
+                    if(distinctValues[i].DistinctValue >= StartRange && distinctValues[i].DistinctValue <= EndRange) {
+                        colFilters.push(distinctValues[i].DistinctValue);
+                    }
+                }
+                if (colFilters.length > 0) {
+                    scope.addColumnFilter(c, colFilters);
+                }
+            }
         }
     }
 

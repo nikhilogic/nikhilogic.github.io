@@ -29,14 +29,15 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                 if (v3 > $scope.variety3) {
                     v3 = 0;
                 }
-                
+                var dtRow = new Date();
+                dtRow.setDate(dt.getDate() + i);
                 $scope.data.push(
                      {
                          Col1String: 'String data ' + v,
                          Col2Label: 'Label data ' + v2,
                          Col3Button: 'Button data',
                          Col4Number: v3,
-                         Col5Date: dt,
+                         Col5Date: dtRow,
                          Col6Link: 'somelink',
                          Col7Input: 'Edit me',
                          Col8Select: { myKey: '222', myVal: '222Value' },
@@ -66,7 +67,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                 v += 1;
                 v2 += 1;
                 v3 += 1;
-                dt.setDate(dt.getDate() + 1);
+                
             }
             $scope.loadingRecords = false;
         }
@@ -213,7 +214,9 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                        
                    },
                    GlyphFn: function (r) { return 'glyphicon-bishop'; },
-                   BadgeFn: function (r) { return r[this.Name].toString().length; }
+                   BadgeFn: function (r) { return r[this.Name].toString().length; },
+                   ColumnType: 'ngNGridNumber'
+                  
                },                            
                {
                    Name: 'Col5Date',

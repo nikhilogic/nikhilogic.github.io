@@ -38,7 +38,6 @@
             </div>
             <div class="navbar-right">
 
-
                 <span class="btn-group">
                     <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}-{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
                     <span>
@@ -92,8 +91,41 @@
                                 </span>
                             </li>
                             <li class="divider"></li>
+                            <span ng-if="c.ColumnType=='ngNGridDate'">
+                                <span class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
+                                </span>
+                                <!--<span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
+            </span>-->
+                                <div></div>
+                                <span class="input-group">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridEndDate" is-open="datepickerendopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerendopen=true" placeholder="To" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
+                                </span>
+                            </span>
+                            </span>
+                            <span ng-if="c.ColumnType=='ngNGridNumber'">
+                                <span class="input-group">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-step-backward"></span>
+                                    </span>
+                                    <input type="number" class="form-control" ng-model="ngNgridStartNumber" ng-required="true" placeholder="From" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber)" />
+                                </span>
+                                <div></div>
+                                <span class="input-group">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-step-forward"></span>
+                                    </span>
+                                    <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber)" />
+                                </span>
+                            </span>
+                            </span>
+                            <li class="divider"></li>
                             <li ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" class="ngngrid-dropdown">
-
                                 <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="c.ColHeaderFilter='';addColumnFilter(c,distinctObj.DistinctValue);$event.stopPropagation()" style="cursor: pointer"></span>
                                 <small style="font-weight:normal">
                                     <span ng-class="c.FilterClassFn(distinctObj)">
@@ -103,7 +135,6 @@
                                     &nbsp;
                                     <label class="label label-default label-xs">{{distinctObj.DistinctCount}}</label>
                                 </small>
-
                             </li>
                         </ul>
                     </div>
@@ -149,7 +180,7 @@
                                 <option value="">Select</option>
                             </select>
                         </span>
-                        <a ng-switch-when="ngNGridLink" href="{{c.UrlFn(row)}}" target="_blank" ng-class="c.ClassFn(row)">
+                        <a ng-switch-when="ngNGridLink" href="{{c.UrlFn(row)}}" target="{{c.TargetFn ? c.TargetFn(row):'_blank'}}" ng-class="c.ClassFn(row)">
                             <span class="glyphicon  {{c.GlyphFn(row)}}"></span>
                             {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
@@ -173,7 +204,7 @@
                 <td ng-show="showRowNumbers"></td>
                 <td ng-show="showRowSelector"></td>
                 <td colspan="{{columnDefinitions.length}}">
-                    <table class="table table-condensed table-bordered table-hover table-striped" ng-repeat="childColDef in childColumndefinitions">
+                    <table class="table table-condensed table-bordered table-striped" ng-repeat="childColDef in childColumndefinitions">
                         <tr>
                             <th ng-repeat="childCol in childColDef">
                                 <span ng-click="changeChildSort(childCol)" style="cursor:pointer">
@@ -207,7 +238,6 @@
                                         <span ng-show="childCol.ClassFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
                                             <span class="glyphicon" ng-class="childCol.GlyphFn(row)"></span>
                                         </span>
-
                                         <select ng-if="childCol.SelectValue != null" name="status" ng-disabled="childCol.DisabledFn(childRow)" class="form-control" ng-model="childRow[childCol.Name]" ng-options="o[childCol.SelectValue]  for o in  childCol.SelectFn(childRow)  track by o[childCol.SelectKey]" ng-change="childRow.isNgNgridDirty=true" required>
                                             <option value="">Select</option>
                                         </select>
@@ -234,9 +264,8 @@
                                 </span>
                             </td>
                         </tr>
-
                     </table>
-                    <table class="table table-condensed table-bordered table-hover table-striped" ng-if="rowFooterdefinitions.length > 0">
+                    <table class="table table-condensed table-bordered table-striped" ng-if="rowFooterdefinitions.length > 0">
                         <tr ng-repeat="rowFooter in rowFooterdefinitions">
                             <td ng-repeat="footerItem in rowFooter">
                                 <span ng-switch="footerItem.ColumnType">
