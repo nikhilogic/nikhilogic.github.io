@@ -5,12 +5,14 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B1A98C33-24D8-4E3D-ABF0-183D64BA57DC}"
 	ProjectSection(SolutionItems) = preProject
+		githubds.html = githubds.html
 		index.html = index.html
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controllers", "Controllers", "{47E418FA-03BF-45C1-A0B8-40DF994D0A3F}"
 	ProjectSection(SolutionItems) = preProject
+		Controllers\githubdsController.js = Controllers\githubdsController.js
 		Controllers\homeController.js = Controllers\homeController.js
 	EndProjectSection
 EndProject

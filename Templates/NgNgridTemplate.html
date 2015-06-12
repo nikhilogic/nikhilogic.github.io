@@ -37,7 +37,6 @@
                 </span>
             </div>
             <div class="navbar-right">
-
                 <span class="btn-group">
                     <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}-{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
                     <span>
@@ -97,8 +96,8 @@
                                     <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
                                 <!--<span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
-            </span>-->
+                                    <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
+                                </span>-->
                                 <div></div>
                                 <span class="input-group">
                                     <span class="input-group-addon">
@@ -126,7 +125,7 @@
                             </span>
                             <li class="divider"></li>
                             <li ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" class="ngngrid-dropdown">
-                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="c.ColHeaderFilter='';addColumnFilter(c,distinctObj.DistinctValue);$event.stopPropagation()" style="cursor: pointer"></span>
+                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="addColumnFilter(c,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer"></span>
                                 <small style="font-weight:normal">
                                     <span ng-class="c.FilterClassFn(distinctObj)">
                                         {{c.FilterTextFn ? c.FilterTextFn(distinctObj):distinctObj.DisplayValue}}
@@ -196,6 +195,7 @@
                             {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </span>
+                        <img ng-show="c.ImgFn" ng-class="c.ImgClassFn(row)" src="{{c.ImgFn(row)}}" />
                     </span>
                 </td>
             </tr>

@@ -207,7 +207,12 @@ angular.module('ngNgrid', ['ui.bootstrap'])
             //for (var c = 0; c < scope.columnDefinitions.length; c++) {                
             //    scope.columnDefinitions[c].ngNgridColumnWidth = document.getElementById('ngGridTable').rows[0].cells[c+3].offsetWidth;
             //    logDebug('Column width for ' + scope.columnDefinitions[c].Name + ' = ' + scope.columnDefinitions[c].ngNgridColumnWidth);
-            //}            
+            //}           
+            distinctValues.sort(function (p, n) {
+                if (p.DistinctValue < n.DistinctValue) { return -1; }
+                if (p.DistinctValue > n.DistinctValue) { return 1; }
+                return 0;
+            });
             return distinctValues;
         };
 
@@ -246,8 +251,8 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                 var filtersAdded = [];
                 //apply the filters for all values which are filtered in drop down list                
                 for (var i = 0; i < col.DropdownFilteredObjects.length; i++) {
-                    scope.addColumnFilter(col, col.DropdownFilteredObjects[i].DistinctValue);
-                    filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);                    
+                    scope.addColumnFilter(col, [col.DropdownFilteredObjects[i].DistinctValue]);
+                    filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);
                 }
                 //notify parent control that filters have changed
                 scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersAdded, isAdded: true });
@@ -272,9 +277,9 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                 var colName = scope.getSortProperty(col);
                 var filtersAdded = [];
                 var filtersRemoved = [];
-               
+
                 for (var i = 0; i < filter.length; i++) {
-                    
+
                     var filterString = filter[i];
 
                     filterString = filterString.toString().trim().toLowerCase();
@@ -297,7 +302,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                         if (!scope.customFilter.ColumnFilters[colName].IsFirstFilter) {
                             scope.customFilter.ColumnFilters[colName].IsFirstFilter = firstFilter;
                         }
-                        filtersAdded.push(filterString);                        
+                        filtersAdded.push(filterString);
                     }
                     else {
 
@@ -313,7 +318,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                                 }
                             }
                         }
-                        filtersRemoved.push(filterString);                        
+                        filtersRemoved.push(filterString);
                     }
                 }
 
@@ -513,12 +518,12 @@ angular.module('ngNgrid', ['ui.bootstrap'])
         }
 
         scope.updateRangeFilter = function (c, StartRange, EndRange) {
-            if(StartRange != null && EndRange != null) {
+            if (StartRange != null && EndRange != null) {
                 var colName = scope.getSortProperty(c);
                 var distinctValues = scope.distinctLists[colName];
-                var colFilters =[];
-                for(var i = 0; i < distinctValues.length; i++) {
-                    if(distinctValues[i].DistinctValue >= StartRange && distinctValues[i].DistinctValue <= EndRange) {
+                var colFilters = [];
+                for (var i = 0; i < distinctValues.length; i++) {
+                    if (distinctValues[i].DistinctValue >= StartRange && distinctValues[i].DistinctValue <= EndRange) {
                         colFilters.push(distinctValues[i].DistinctValue);
                     }
                 }
