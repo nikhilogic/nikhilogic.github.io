@@ -251,7 +251,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                 var filtersAdded = [];
                 //apply the filters for all values which are filtered in drop down list                
                 for (var i = 0; i < col.DropdownFilteredObjects.length; i++) {
-                    scope.addColumnFilter(col, [col.DropdownFilteredObjects[i].DistinctValue]);
+                    scope.addColumnFilters(col, [col.DropdownFilteredObjects[i].DistinctValue]);
                     filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);
                 }
                 //notify parent control that filters have changed
@@ -264,23 +264,23 @@ angular.module('ngNgrid', ['ui.bootstrap'])
          * Grid Filters
          * Event for the parent control to set the filters
          */
-        scope.$on('ngNGrid_FilterChange', function (event, filterCol, filter) {
-            scope.addColumnFilter(filterCol, filter);
+        scope.$on('ngNGrid_FilterChange', function (event, filterCol, filters) {
+            scope.addColumnFilters(filterCol, filters);
         });
 
         /*
          * Grid Filters
          * Sets or removes the filters for columns
          */
-        scope.addColumnFilter = function (col, filter) {
-            if (filter != null) {
+        scope.addColumnFilters = function (col, filters) {
+            if (filters != null) {
                 var colName = scope.getSortProperty(col);
                 var filtersAdded = [];
                 var filtersRemoved = [];
 
-                for (var i = 0; i < filter.length; i++) {
+                for (var i = 0; i < filters.length; i++) {
 
-                    var filterString = filter[i];
+                    var filterString = filters[i];
 
                     filterString = filterString.toString().trim().toLowerCase();
                     //Is this the first filter?
@@ -528,7 +528,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
                     }
                 }
                 if (colFilters.length > 0) {
-                    scope.addColumnFilter(c, colFilters);
+                    scope.addColumnFilters(c, colFilters);
                 }
             }
         }

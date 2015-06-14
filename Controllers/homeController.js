@@ -39,7 +39,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                          Col4Number: v3,
                          Col5Date: dtRow,
                          Col6Link: 'somelink',
-                         Col7Input: 'Edit me',
+                         Col7Input: '',
                          Col8Select: { myKey: '222', myVal: '222Value' },
                          Col9Complex : { myId:1, myColor:'default'},
                          Children1: [
@@ -117,7 +117,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
         $scope.columnDefs = [
                {
                    Name: 'Col1String',
-                   DisplayName: 'String(Default Type) Column',
+                   DisplayName: 'Default Column',
                    GlyphFn: function (r) { return 'glyphicon-king'; },
                    BadgeFn: function (r) { return r[this.Name].length; },
                    ClassFn: function (r) { return 'text-primary'; }
@@ -173,18 +173,18 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    GlyphFn: function (r) { return 'glyphicon-pawn'; },
                    TooltipFn: function (r) { return 'some tool-tip'; },
                    ClickFn: function (r) {
-                       r.isNgngridUpdated = true;
+                       r.isNgNgridUpdated = true;
                        $timeout(function () {
-                           r.isNgngridUpdated = false;
+                           r.isNgNgridUpdated = false;
                        },5000);
                    },
                    SortProperty: 'length',
-                   DisableFilter: true,                   
+                   DisableFilter: false,                   
                    BadgeFn: function (r) { return r[this.Name].length; }
                },
                {
                    Name: 'Col4Number',
-                   DisplayName: 'Number Column',
+                   DisplayName: 'ngNGridNumber Column',
                    ClassFn: function (r) {
                        switch (r[this.Name]) {
                            case 0:
@@ -244,6 +244,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    ClassFn: function (r) { return 'label-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    TooltipFn: function (r) { return 'asd'; },
+                   NullOrEmptyFn: function(r) {return 'Edit me';},
                    ColumnType: 'ngNGridInput'
                }
                ,

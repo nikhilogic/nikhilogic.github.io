@@ -1,18 +1,18 @@
 ﻿
-.ngngrid-scroll {    
+.ngngrid-scroll {
     overflow-y: auto;
-    position:absolute;
+    position: absolute;
     width: 100%;
 }
 
 .ngngrid-animaterow {
-    -webkit-animation: animate_bg 2000ms;
-    -moz-animation: animate_bg 2000ms;
-    -o-animation: animate_bg 2000ms;
-    animation: animate_bg 2000ms;
-    -webkit-animation-iteration-count: 2;
+    -moz-animation: animate_bg 2500ms;
+    -o-animation: animate_bg 2500ms;
+    -webkit-animation: animate_bg 2500ms;
+    animation: animate_bg 2500ms;
     -moz-animation-iteration-count: 2;
     -o-animation-iteration-count: 2;
+    -webkit-animation-iteration-count: 2;
     animation-iteration-count: 2;
 }
 
@@ -83,8 +83,31 @@
 }
 
 
-.ngngrid-dropdown{
-    white-space:nowrap;
-    margin-left:10px;
-    margin-right:10px;
+.ngngrid-dropdown {
+    white-space: nowrap;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
+.ngngrid-caret-left {
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    border-right: 4px solid;
+    display: inline-block;
+    height: 0;
+    opacity: 1;
+    vertical-align: middle;
+    width: 0;
+}
+
+.ngngrid-caret-right {
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    border-left: 4px solid;
+    display: inline-block;
+    height: 0;
+    opacity: 1;
+    vertical-align: middle;
+    width: 0;
 }

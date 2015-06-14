@@ -6,7 +6,7 @@
                     <span class="btn-group">
                         <label class="btn btn-default" btn-checkbox ng-model="hideSettings" data-toggle="tooltip" data-placement="right" title="Show/Hide Settings">
                             <span class="glyphicon glyphicon-cog"></span>
-                            <span class="glyphicon" ng-class="hideSettings?'glyphicon-chevron-left':'glyphicon-chevron-right'"></span>
+                            <span ng-class="hideSettings?'ngngrid-caret-left':'ngngrid-caret-right'"></span>
                         </label>
                     </span>
                     <span class="btn-group" ng-show="hideSettings">
@@ -89,15 +89,15 @@
                                     <span>Select/Unselect All</span>
                                 </span>
                             </li>
-                            <li class="divider"></li>
+                            <li ng-if="c.ColumnType=='ngNGridDate' || c.ColumnType=='ngNGridNumber'" class="divider"></li>
                             <span ng-if="c.ColumnType=='ngNGridDate'">
                                 <span class="input-group">
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
                                 <!--<span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
-                                </span>-->
+                <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
+            </span>-->
                                 <div></div>
                                 <span class="input-group">
                                     <span class="input-group-addon">
@@ -105,7 +105,6 @@
                                     </span>
                                     <input type="date" class="form-control" datepicker-popup ng-model="ngNgridEndDate" is-open="datepickerendopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerendopen=true" placeholder="To" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
-                            </span>
                             </span>
                             <span ng-if="c.ColumnType=='ngNGridNumber'">
                                 <span class="input-group">
@@ -122,17 +121,16 @@
                                     <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber)" />
                                 </span>
                             </span>
-                            </span>
+
                             <li class="divider"></li>
                             <li ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" class="ngngrid-dropdown">
-                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="addColumnFilter(c,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer"></span>
+                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="addColumnFilters(c,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer"></span>
                                 <small style="font-weight:normal">
-                                    <span ng-class="c.FilterClassFn(distinctObj)">
-                                        {{c.FilterTextFn ? c.FilterTextFn(distinctObj):distinctObj.DisplayValue}}
+                                    <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">                                        
+                                        {{(distinctObj.DisplayValue != null && distinctObj.DisplayValue.toString() != '') ? distinctObj.DisplayValue : '(Blanks)'}}
                                         <span class="glyphicon" ng-class="c.FilterGlyphFn(distinctObj)"></span>
                                     </span>
-                                    &nbsp;
-                                    <label class="label label-default label-xs">{{distinctObj.DistinctCount}}</label>
+                                    <span class="text-muted">({{distinctObj.DistinctCount}})</span>
                                 </small>
                             </li>
                         </ul>
@@ -153,6 +151,9 @@
                 <td ng-repeat="c in columnDefinitions" ng-class="c.CellClassFn(row)" ng-hide="c.isNgNgridColumnHide">
                     <span ng-show="$index ==0 && row.isNgNgridDirty" class='glyphicon glyphicon-edit'></span>
                     <span ng-switch="c.ColumnType">
+
+
+
                         <label ng-switch-when="ngNGridLabel" class="label {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}">
                             <span class="glyphicon {{c.GlyphFn(row)}}"></span>
                             {{c.TextFn ?  c.TextFn(row) :  row[c.Name]}}
