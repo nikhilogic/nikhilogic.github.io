@@ -1,4 +1,10 @@
-﻿
+﻿/*
+ * ng-ngrid
+ * https://github.com/nikhilogic/ngNGrid
+
+ * Version: 1.0
+ * License: MIT
+ */
 .ngngrid-scroll {
     overflow-y: auto;
     position: absolute;
@@ -81,7 +87,6 @@
         background-color: #d9534f;
     }
 }
-
 
 .ngngrid-dropdown {
     white-space: nowrap;

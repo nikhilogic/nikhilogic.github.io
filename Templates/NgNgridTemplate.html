@@ -1,4 +1,11 @@
-﻿<div ng-style="getStyle()">
+﻿<!--/*
+ * ng-ngrid
+ * https://github.com/nikhilogic/ngNGrid
+
+ * Version: 1.0
+ * License: MIT
+ */-->
+<div ng-style="getStyle()">
     <nav id="ngGridToolbar" class="navbar-form navbar-default navbar-static-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-left">
@@ -61,7 +68,6 @@
                     <span class="glyphicon" ng-class="allRowsSelected ? 'glyphicon-check': 'glyphicon-unchecked'"></span>
                 </th>
                 <th ng-repeat="c in columnDefinitions" ng-hide="c.isNgNgridColumnHide" class="bg-primary">
-                    <!--<div ng-click="c.isNgNgridColumnHide = true" style="cursor:pointer" data-toggle="tooltip" title="Hide Column" class="glyphicon glyphicon-remove-sign"></div>-->
                     <span ng-click="changeSort(c)" style="cursor:pointer">
                         <u>{{c.DisplayName}}</u>
                         <span ng-show="isSorted(c)" class="glyphicon" ng-class="gridSortOrder?'glyphicon-chevron-down':'glyphicon-chevron-up'"></span>
@@ -74,59 +80,55 @@
                 <th ng-show="showRowSelector"></th>
                 <th ng-repeat="c in columnDefinitions" ng-hide="c.isNgNgridColumnHide">
                     <div ng-hide="c.DisableFilter" class="input-group input-group-sm dropdown" dropdown auto-close="outsideClick" is-open="c.isNgNgridDropdownOpen" on-toggle="ondropDownToggle(c,'ngNgridDropdownFilter' + $index)">
-                        <input type="text" class="form-control" ng-model="dropDownFilterInput" ng-init="dropDownFilterInput=''" ng-focus="c.isNgNgridDropdownOpen=true" id="ngNgridDropdownFilter{{$index}}" ng-keypress="dropdownFilterKeyPress($event,c)" />
-                        <span class="input-group-btn">
-                            <button type="button" dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c) ? 'btn-primary':'btn-default'">
-                                <span class="glyphicon glyphicon-filter"></span>
-                            </button>
-                        </span>
+                        <span class="input-group">
+                            <input type="text" class="form-control" ng-model="dropDownFilterInput" ng-init="dropDownFilterInput=''" ng-focus="c.isNgNgridDropdownOpen=true" id="ngNgridDropdownFilter{{$index}}" ng-keypress="dropdownFilterKeyPress($event,c)" style="display:inline" />
+                            <span class="input-group-btn">
+                                <button type="button" dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c) ? 'btn-primary':'btn-default'">
+                                    <span class="glyphicon glyphicon-filter"></span>
+                                </button>
+                            </span>
+                        </span>                        
                         <ul class="dropdown-menu" ng-class="$index==columnDefinitions.length-1 ? 'dropdown-menu-right' :''" role="menu" style="overflow-y:auto;max-height:500px;width:auto;overflow-x:auto">
                             <li class="ngngrid-dropdown"><small class="text-muted">*Type & hit Enter to apply filters</small></li>
-                            <li class="divider"></li>
-                            <li class="ngngrid-dropdown">
-                                <span class="input-group input-group-sm">
-                                    <span class="glyphicon" ng-class="isColFilterApplied(c)?'glyphicon-check':'glyphicon-unchecked'" style="cursor: pointer" ng-click="toggleColFilters(c);$event.stopPropagation()"></span>
-                                    <span>Select/Unselect All</span>
-                                </span>
-                            </li>
-                            <li ng-if="c.ColumnType=='ngNGridDate' || c.ColumnType=='ngNGridNumber'" class="divider"></li>
-                            <span ng-if="c.ColumnType=='ngNGridDate'">
-                                <span class="input-group">
-                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                            <li class="divider"></li>                                                       
+                            <li class="ngngrid-dropdown" ng-if="c.ColumnType=='ngNGridDate'">
+                                <span class="input-group" style="padding-bottom:5px">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-muted"></span></span>
                                     <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
-                                <!--<span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="datepickeropen=true"><span class="glyphicon glyphicon-calendar"></span></button>
-            </span>-->
-                                <div></div>
                                 <span class="input-group">
                                     <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
+                                        <span class="text-muted glyphicon glyphicon-calendar"></span>
                                     </span>
                                     <input type="date" class="form-control" datepicker-popup ng-model="ngNgridEndDate" is-open="datepickerendopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerendopen=true" placeholder="To" ng-change="updateDateFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
-                            </span>
-                            <span ng-if="c.ColumnType=='ngNGridNumber'">
+                            </li>
+                            <li class="ngngrid-dropdown" ng-if="c.ColumnType=='ngNGridNumber'" >
+                                <span class="input-group" style="padding-bottom:5px" >
+                                    <span class="input-group-addon">
+                                        #
+                                    </span>
+                                    <input type="number" class="form-control" ng-model="ngNgridStartNumber" ng-required="true" placeholder="From" ng-change="updateNumberFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                </span>                                
                                 <span class="input-group">
                                     <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-step-backward"></span>
+                                        #
                                     </span>
-                                    <input type="number" class="form-control" ng-model="ngNgridStartNumber" ng-required="true" placeholder="From" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber)" />
+                                    <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateNumberFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
                                 </span>
-                                <div></div>
-                                <span class="input-group">
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-step-forward"></span>
-                                    </span>
-                                    <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber)" />
+                            </li>
+                            <li  ng-if="c.ColumnType=='ngNGridDate' || c.ColumnType=='ngNGridNumber'" class="divider"></li>
+                            <li class="ngngrid-dropdown">
+                                <span class="input-group input-group-sm" style="cursor: pointer" ng-click="toggleColFilters(c);$event.stopPropagation()">
+                                    <span class="glyphicon" ng-class="isColFilterApplied(c)?'glyphicon-check':'glyphicon-unchecked'"></span>
+                                    <span>Select/Unselect All</span>
                                 </span>
-                            </span>
-
+                            </li>
                             <li class="divider"></li>
-                            <li ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" class="ngngrid-dropdown">
-                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'" ng-click="addColumnFilters(c,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer"></span>
+                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctLists[getSortProperty(c)] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" ng-click="addColumnFilters(c,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">
+                                <span class="glyphicon" ng-class="isColFiltered(c,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'"></span>
                                 <small style="font-weight:normal">
-                                    <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">                                        
+                                    <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">
                                         {{(distinctObj.DisplayValue != null && distinctObj.DisplayValue.toString() != '') ? distinctObj.DisplayValue : '(Blanks)'}}
                                         <span class="glyphicon" ng-class="c.FilterGlyphFn(distinctObj)"></span>
                                     </span>
