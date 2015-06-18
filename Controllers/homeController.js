@@ -15,6 +15,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
         $scope.variety = 1;
         $scope.variety2 = 3;
         $scope.variety3 = 5;
+        $scope.colFilters = [];
         $scope.loadRows = function () {
             var v = 0;
             var v2 = 0;
@@ -174,11 +175,12 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    TooltipFn: function (r) { return 'some tool-tip'; },
                    ClickFn: function (r) {
                        r.isNgNgridUpdated = true;
+                       logDebug(formatJson(r));
                        $timeout(function () {
                            r.isNgNgridUpdated = false;
                        },5000);
                    },
-                   SortProperty: 'length',
+                   //SortProperty: 'length',
                    DisableFilter: false,                   
                    BadgeFn: function (r) { return r[this.Name].length; }
                },
@@ -256,20 +258,21 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    ClassFn: function (r) { return 'label-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
-                   SelectValue: 'myVal',
-                   SortProperty: 'myVal'
+                   SelectValue: 'myVal'
+                   //,
+                   //SortProperty: 'myVal'
                },
                {
-                   Name: 'Col9Complex',
+                   Name: 'Col9Complex.myColor',
                    DisplayName: 'Complex Object Column',
-                   ColumnType: 'ngNGridLabel',                   
-                   ClassFn: function (r) { return 'label-' + r[this.Name].myColor; },
+                   ColumnType: 'ngNGridInput',                   
+                   ClassFn: function (r) { return 'label-' + r.Col9Complex.myColor; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },                   
-                   SortProperty: 'myColor',
-                   TextFn: function (r) { return 'This is object with myId: ' + r[this.Name].myId + ' and myColor:' + r[this.Name].myColor; },
+                   //SortProperty: 'myColor',
+                   TextFn: function (r) { return 'This is object with myId: ' + r.Col9Complex.myId + ' and myColor:' + r.Col9Complex.myColor; },
                    FilterClassFn: function (c) { return 'label label-' + c.DistinctValue; },
-                   FilterTextFn: function (c) {
-                       return 'This is object with myId: ' + c.myId + ' and myColor:' + c.myColor;
+                   FilterTextFn: function (c) {                       
+                       return 'This is object with value: ' + c.DistinctValue 
                    }
                }
         ];
