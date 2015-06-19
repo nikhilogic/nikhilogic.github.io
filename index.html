@@ -6,32 +6,54 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="./Css/ng-ngrid.css">
 </head>
-<body style="overflow:hidden">
+<body >
 
-    <div ng-app="NgNgridApp">
-        <div ng-controller="HomeController">
-                        
-            <!--<table>
-                <tr ng-repeat="c in columnDefs" >
-                    <td ng-repeat="(key,value) in c | filter:filterColumnDemo(key,value)"><label class="label label-default">{{key}}</label></td>                   
-                </tr>
-            </table>-->
+    <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
+        <div ng-controller="HomeController" ng-init="colspan=2">            
+            
+            
+            <div class="row">
+                <div class="col-md-{{colspan}}">
+                    <span class="btn-group">
+                        <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><<</button>
+                        <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 ">>></button>
+                    </span>
+                    <br/>
+                    <span ng-repeat="c in columnDefs">
+                        <span class="label label-info">{{c.DisplayName}}</span>
+                        <span ng-repeat="(key,value) in c ">
+                            <span class="input-group input-group-sm">
+                                <span class="input-group-addon">
+                                     {{key}}
+                                </span>
+                                <input class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"  />
+                            </span>
+                        </span>
+                        <br />
+                    </span>
 
-            <ng-ngrid rows="data"
-                      column-definitions="columnDefs"
-                      child-columndefinitions="[childColumndef1,childColumndef2]"
-                      child-propertynames="['Children1','Children2']"
-                      initial-pagesize="20"
-                      initial-sortcolumn="aSortcolumn"
-                      initial-sortdesc="aSortdesc"
-                      show-row-numbers="true"
-                      show-row-selector="true"
-                      rows-loading="loadingRecords"
-                      rows-loading-text="Loading records have patience"
-                      grid-height-stretch-bottom-offset="0"
-                      column-filters="colFilters">
-            </ng-ngrid>
 
+                </div>
+
+                <div class="col-md-{{12-colspan}}">
+                    
+                    <ng-ngrid rows="data"
+                  column-definitions="columnDefs"
+                  child-columndefinitions="[childColumndef1,childColumndef2]"
+                  child-propertynames="['Children1','Children2']"
+                  initial-pagesize="20"
+                  initial-sortcolumn="aSortcolumn"
+                  initial-sortdesc="aSortdesc"
+                  show-row-numbers="true"
+                  show-row-selector="true"
+                  rows-loading="loadingRecords"
+                  rows-loading-text="Loading records have patience"
+                  grid-height-stretch-bottom-offset="0"
+                  add-column-filters="addColFilters"
+                  column-filters="colFilters">
+        </ng-ngrid>
+                </div>
+            </div>
         </div>
     </div>
     <script language="javascript">

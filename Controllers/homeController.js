@@ -243,7 +243,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                {
                    Name: 'Col7Input',
                    DisplayName: 'ngNGridInput Column',
-                   ClassFn: function (r) { return 'label-warning'; },
+                   ClassFn: function (r) { return 'label label-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    TooltipFn: function (r) { return 'asd'; },
                    NullOrEmptyFn: function(r) {return 'Edit me';},
@@ -255,7 +255,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    DisplayName: 'ngNGridSelect Column',
                    ColumnType: 'ngNGridSelect',
                    SelectFn: function (row) { return $scope.optionList; },
-                   ClassFn: function (r) { return 'label-danger'; },
+                   ClassFn: function (r) { return 'label label-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
                    SelectValue: 'myVal'
@@ -266,7 +266,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    Name: 'Col9Complex.myColor',
                    DisplayName: 'Complex Object Column',
                    ColumnType: 'ngNGridInput',                   
-                   ClassFn: function (r) { return 'label-' + r.Col9Complex.myColor; },
+                   ClassFn: function (r) { return 'label label-' + r.Col9Complex.myColor; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },                   
                    //SortProperty: 'myColor',
                    TextFn: function (r) { return 'This is object with myId: ' + r.Col9Complex.myId + ' and myColor:' + r.Col9Complex.myColor; },
@@ -277,11 +277,20 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                }
         ];
 
-        //$scope.filterColumnDemo = function (value, index)
-        //{
-        //    logDebug('asd');
-        //    return value.indexOf('Fn') == -1;
-        //}
+        $scope.filterColumnDemo = function (value)
+        {
+            logDebug(formatJson(value));            
+            return false;
+            return value.indexOf('Fn') == -1;
+        }
 
+        $scope.applyChange = function (c, key, value) {
+            if (key.indexOf('Fn') != -1) {
+                c[key] = eval('(' + value + ')');
+            }
+            else {
+                c[key] = value;
+            }
+        }
        
     }]);
