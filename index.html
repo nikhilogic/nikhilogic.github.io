@@ -6,52 +6,75 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="./Css/ng-ngrid.css">
 </head>
-<body >
+<body>
 
     <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
-        <div ng-controller="HomeController" ng-init="colspan=2">            
-            
-            
+        <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">
+
+
             <div class="row">
                 <div class="col-md-{{colspan}}">
                     <span class="btn-group">
-                        <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><<</button>
-                        <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 ">>></button>
+                        <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
+                        <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
                     </span>
-                    <br/>
-                    <span ng-repeat="c in columnDefs">
-                        <span class="label label-info">{{c.DisplayName}}</span>
-                        <span ng-repeat="(key,value) in c ">
-                            <span class="input-group input-group-sm">
-                                <span class="input-group-addon">
-                                     {{key}}
-                                </span>
-                                <input class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"  />
-                            </span>
-                        </span>
-                        <br />
+                    
+                    <span class="btn-group">
+                        <button type="button" class="btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
+                            <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
+                            {{runMode ? 'Start Design Mode' : 'Start Run Mode'}}
+                        </button>
                     </span>
+                    <br /><br />
+                    <span ng-show="!runMode">
+                        <select class="form-control" ng-model="c" ng-options="o.DisplayName  for o in  columnDefs  track by o.Name" ng-change="" required ng-disabled="runMode">
+                            <option value="">Select Column</option>
+                        </select>
 
 
+                        <h3>
+                            <span class="label label-info">{{c.DisplayName}}</span>
+                        </h3>
+
+                        <accordion close-others="false" ng-init="open= true">
+                            <accordion-group ng-repeat="(key,value) in c" ng-if="key != 'DropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'" is-open="open">
+                                <accordion-heading>
+                                    {{key}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': open, 'glyphicon-chevron-right': !open}"></i>
+                                </accordion-heading>
+                                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"></textarea>
+                            </accordion-group>
+
+                        </accordion>
+
+                        <!--<span ng-repeat="(key,value) in c" ng-if="key != 'DropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'">
+            <span class="form-group from-group-sm">
+                <span class="input-group-addon">
+                    {{key}}
+                </span>
+                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"></textarea>
+            </span>
+            <br/>
+        </span>-->
+                    </span>                                     
                 </div>
 
                 <div class="col-md-{{12-colspan}}">
-                    
+
                     <ng-ngrid rows="data"
-                  column-definitions="columnDefs"
-                  child-columndefinitions="[childColumndef1,childColumndef2]"
-                  child-propertynames="['Children1','Children2']"
-                  initial-pagesize="20"
-                  initial-sortcolumn="aSortcolumn"
-                  initial-sortdesc="aSortdesc"
-                  show-row-numbers="true"
-                  show-row-selector="true"
-                  rows-loading="loadingRecords"
-                  rows-loading-text="Loading records have patience"
-                  grid-height-stretch-bottom-offset="0"
-                  add-column-filters="addColFilters"
-                  column-filters="colFilters">
-        </ng-ngrid>
+                              column-definitions="columnDefs"
+                              child-columndefinitions="[childColumndef1,childColumndef2]"
+                              child-propertynames="['Children1','Children2']"
+                              initial-pagesize="20"
+                              initial-sortcolumn="aSortcolumn"
+                              initial-sortdesc="aSortdesc"
+                              show-row-numbers="true"
+                              show-row-selector="true"
+                              rows-loading="loadingRecords"
+                              rows-loading-text="Loading records have patience"
+                              grid-height-stretch-bottom-offset="0"
+                              add-column-filters="addColFilters"
+                              column-filters="colFilters">
+                    </ng-ngrid>
                 </div>
             </div>
         </div>

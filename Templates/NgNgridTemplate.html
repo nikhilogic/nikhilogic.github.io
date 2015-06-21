@@ -125,7 +125,7 @@
                                 </span>
                             </li>
                             <li class="divider"></li>
-                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">
+                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">                            
                                 <span class="glyphicon" ng-class="isColFiltered(c.Name,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'"></span>
                                 <small style="font-weight:normal">
                                     <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">
@@ -199,7 +199,7 @@
                             {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </span>
-                        <img ng-show="c.ImgFn" ng-class="c.ImgClassFn(row)" src="{{c.ImgFn(row)}}" />
+                        <img ng-if="c.ImgFn" ng-class="c.ImgClassFn(row)" ng-src="c.ImgFn(row)" />
                     </span>
                 </td>
             </tr>

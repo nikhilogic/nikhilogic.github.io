@@ -284,7 +284,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
             return value.indexOf('Fn') == -1;
         }
 
-        $scope.applyChange = function (c, key, value) {
+        $scope.applyChange = function (c, key, value) {            
             if (key.indexOf('Fn') != -1) {
                 c[key] = eval('(' + value + ')');
             }
