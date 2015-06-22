@@ -9,24 +9,22 @@
 <body>
 
     <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
-        <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">
-
-
+        <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">            
             <div class="row">
                 <div class="col-md-{{colspan}}">
                     <span class="btn-group">
                         <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
                         <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
                     </span>
-                    
+
                     <span class="btn-group">
                         <button type="button" class="btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
                             <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
-                            {{runMode ? 'Start Design Mode' : 'Start Run Mode'}}
+                            {{runMode ? 'Switch to Design Mode' : 'Switch to Run Mode'}}
                         </button>
                     </span>
                     <br /><br />
-                    <span ng-show="!runMode">
+                    <span ng-show="!runMode" class="ngngrid-animate-show">
                         <select class="form-control" ng-model="c" ng-options="o.DisplayName  for o in  columnDefs  track by o.Name" ng-change="" required ng-disabled="runMode">
                             <option value="">Select Column</option>
                         </select>
@@ -45,19 +43,8 @@
                             </accordion-group>
 
                         </accordion>
-
-                        <!--<span ng-repeat="(key,value) in c" ng-if="key != 'DropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'">
-            <span class="form-group from-group-sm">
-                <span class="input-group-addon">
-                    {{key}}
-                </span>
-                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"></textarea>
-            </span>
-            <br/>
-        </span>-->
-                    </span>                                     
-                </div>
-
+                    </span>
+                </div>                
                 <div class="col-md-{{12-colspan}}">
 
                     <ng-ngrid rows="data"
@@ -105,6 +92,7 @@
 
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
     <script src="./Modules/ng-ngrid.js"></script>

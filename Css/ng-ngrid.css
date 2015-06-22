@@ -116,3 +116,20 @@
     vertical-align: middle;
     width: 0;
 }
+
+.ngngrid-animate-show {    
+    opacity: 1;
+}
+
+.ngngrid-animate-show.ng-hide-add.ng-hide-add-active,
+.ngngrid-animate-show.ng-hide-remove.ng-hide-remove-active {
+    -webkit-transition: all linear 0.5s;
+    -moz-transition: all linear 0.5s;
+    -o-transition: all linear 0.5s;
+    transition: all linear 0.5s;
+}
+
+.ngngrid-animate-show.ng-hide {        
+        
+    opacity: 0;        
+}

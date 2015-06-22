@@ -11,28 +11,31 @@
             <div class="navbar-left">
                 <span class="btn-toolbar">
                     <span class="btn-group">
-                        <label class="btn btn-default" btn-checkbox ng-model="hideSettings" data-toggle="tooltip" data-placement="right" title="Show/Hide Settings">
+                        <label class="btn btn-default" btn-checkbox ng-model="showSettings" data-toggle="tooltip" data-placement="right" title="Show/Hide Settings">
                             <span class="glyphicon glyphicon-cog"></span>
-                            <span ng-class="hideSettings?'ngngrid-caret-left':'ngngrid-caret-right'"></span>
+                            <span ng-class="showSettings?'ngngrid-caret-left':'ngngrid-caret-right'"></span>
                         </label>
-                    </span>
-                    <span class="btn-group" ng-show="hideSettings">
-                        <label class="btn btn-default" btn-checkbox ng-model="showRowNumbers" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers">
-                            <span class="glyphicon" ng-class="showRowNumbers?'glyphicon-check':'glyphicon-unchecked'"></span> Row #
-                        </label>
-                        <label class="btn btn-default" btn-checkbox ng-model="showRowSelector" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">
-                            <span class="glyphicon" ng-class="showRowSelector?'glyphicon-check':'glyphicon-unchecked'"></span> Selectable Rows
-                        </label>
-                        <label class="btn btn-default" btn-checkbox ng-model="showChildrenCount" data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">
-                            <span class="glyphicon" ng-class="showChildrenCount?'glyphicon-check':'glyphicon-unchecked'"></span> Child Record Count
-                        </label>
-                    </span>
-                    <span class="btn-group" ng-show="hideSettings">
+                    </span>                    
+                   
+                   
+                        
+                        <span class="btn-group ngngrid-animate-show" ng-show="showSettings">
+                            <label class="btn btn-default" btn-checkbox ng-model="showRowNumbers" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers">
+                                <span class="glyphicon" ng-class="showRowNumbers?'glyphicon-check':'glyphicon-unchecked'"></span> Row #
+                            </label>
+                            <label class="btn btn-default" btn-checkbox ng-model="showRowSelector" data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">
+                                <span class="glyphicon" ng-class="showRowSelector?'glyphicon-check':'glyphicon-unchecked'"></span> Selectable Rows
+                            </label>
+                            <label class="btn btn-default" btn-checkbox ng-model="showChildrenCount" data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">
+                                <span class="glyphicon" ng-class="showChildrenCount?'glyphicon-check':'glyphicon-unchecked'"></span> Child Record Count
+                            </label>
+                        </span>
+                    <span class="btn-group ngngrid-animate-show" ng-show="showSettings">
                         <label class="btn btn-danger" ng-click="clearAllFilters()" ng-disabled="!anyFiltersExist()" data-toggle="tooltip" data-placement="right" title="Clear All Filters">
                             Clear all <span class="glyphicon glyphicon-filter"></span>
                         </label>
                     </span>
-                    <span class="btn-group" ng-show="hideSettings">
+                    <span class="btn-group ngngrid-animate-show" ng-show="showSettings">
                         <input id="fileUploadJson" class="form-control btn btn-default" type="file" accept=".json" onchange="angular.element(this).scope().on_fileUpload(this)" style="display:none" />
                         <label class="btn btn-primary" ng-click="importFromJson()" data-toggle="tooltip" data-placement="right" title="Import grid rows from json file">
                             Import <span class="glyphicon glyphicon-import"></span>
@@ -41,6 +44,7 @@
                             Export Selected <span class="glyphicon glyphicon-export"></span>
                         </label>
                     </span>
+                    
                 </span>
             </div>
             <div class="navbar-right">

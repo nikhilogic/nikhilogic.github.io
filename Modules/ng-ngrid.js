@@ -5,7 +5,7 @@
  * Version: 1.0
  * License: MIT
  */
-angular.module('ngNgrid', ['ui.bootstrap'])
+angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
 .directive('ngNgrid', function ($filter, $window, $timeout) {
 
     function link(scope, element, attrs) {
@@ -15,6 +15,7 @@ angular.module('ngNgrid', ['ui.bootstrap'])
         scope.gridChildrenSortColumn = '';        
         scope.filterSelectionList = [];
         scope.distinctColValues = [];
+        scope.showSettings = true;
         /*
          * Grid scrolling
          * Sets the scroll area as per the stretch bottom offset or fixed height defined 
@@ -525,7 +526,8 @@ angular.module('ngNgrid', ['ui.bootstrap'])
             onDataImport: '&',
             onDataExport: '&',
             addColumnFilters: '=',
-            columnFilters: '='
+            columnFilters: '=',
+            showSettings: '=?'
         },
         templateUrl: 'Templates/NgNgridTemplate.html',
         link: link

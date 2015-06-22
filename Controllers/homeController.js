@@ -3,13 +3,12 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
     function ($scope, $timeout) {
 
         $scope.aSortcolumn = '';
-        $scope.aSortdesc = false;        
+        $scope.aSortdesc = false;
         var dt = new Date();
         var d1 = new Date();
         var d2 = new Date();
         d1.setDate(dt.getDate() + 1);
-        d2.setDate(dt.getDate() + 2);
-        //$scope.gridbottomids = ['ftr1'];
+        d2.setDate(dt.getDate() + 2);        
         $scope.data = [];    
         $scope.loadingRecords = true;
         $scope.variety = 1;
@@ -41,8 +40,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                          Col5Date: dtRow,
                          Col6Link: 'somelink',
                          Col7Input: '',
-                         Col8Select: { myKey: '222', myVal: '222Value' },
-                         Col9Complex : { myId:1, myColor:'default'},
+                         Col8Select: { myKey: '222', myVal: '222Value' },                         
                          Children1: [
                              {
                                  ChildCol1String: 'childstringval1',
@@ -163,14 +161,13 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
 
                        }
                        
-                   },
-                   BadgeFn: function (r) { return r[this.Name].length; }
+                   }                   
                },
                {
                    Name: 'Col3Button',
                    DisplayName: 'ngNGridButton Column',
                    ColumnType: 'ngNGridButton',
-                   ClassFn: function (r) { return 'btn-success'; },
+                   ClassFn: function (r) { return 'btn-primary'; },
                    GlyphFn: function (r) { return 'glyphicon-pawn'; },
                    TooltipFn: function (r) { return 'some tool-tip'; },
                    ClickFn: function (r) {
@@ -179,8 +176,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                        $timeout(function () {
                            r.isNgNgridUpdated = false;
                        },5000);
-                   },
-                   //SortProperty: 'length',
+                   },                   
                    DisableFilter: false,                   
                    BadgeFn: function (r) { return r[this.Name].length; }
                },
@@ -190,22 +186,22 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    ClassFn: function (r) {
                        switch (r[this.Name]) {
                            case 0:
-                               return 'text-warning';
-                               break;
-                           case 1:
-                               return 'text-danger';
-                               break;
-                           case 2:
-                               return 'text-info';
-                               break;
-                           case 3:
-                               return 'text-success';
-                               break;
-                           case 4:
                                return 'text-primary';
                                break;
-                           case 5:
+                           case 1:
+                               return 'text-success';
+                               break;
+                           case 2:
+                               return 'text-warning';
+                               break;
+                           case 3:
+                               return 'text-danger';
+                               break;
+                           case 4:
                                return 'text-muted';
+                               break;
+                           case 5:
+                               return 'text-default';
                                break;
                            case 6:
                                return '';
@@ -224,7 +220,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    Name: 'Col5Date',
                    DisplayName: 'ngNGridDate Column',
                    ColumnType: 'ngNGridDate',
-                   ClassFn: function (r) { return 'text-danger'; },
+                   ClassFn: function (r) { return 'text-muted'; },
                    GlyphFn: function (r) { return 'glyphicon-knight'; },
                    BadgeFn: function (r) { return r[this.Name].toString().length; },
                    DateFormatFn: function (r) { return 'yyyy-MM-dd HH:mm:ss'; },
@@ -259,22 +255,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
                    SelectValue: 'myVal'
-                   //,
-                   //SortProperty: 'myVal'
-               },
-               {
-                   Name: 'Col9Complex.myColor',
-                   DisplayName: 'Complex Object Column',
-                   ColumnType: 'ngNGridInput',                   
-                   ClassFn: function (r) { return 'label label-' + r.Col9Complex.myColor; },
-                   GlyphFn: function (r) { return 'glyphicon-queen' },                   
-                   //SortProperty: 'myColor',
-                   TextFn: function (r) { return 'This is object with myId: ' + r.Col9Complex.myId + ' and myColor:' + r.Col9Complex.myColor; },
-                   FilterClassFn: function (c) { return 'label label-' + c.DistinctValue; },
-                   FilterTextFn: function (c) {                       
-                       return 'This is object with value: ' + c.DistinctValue 
-                   }
-               }
+               }               
         ];
 
         $scope.filterColumnDemo = function (value)
