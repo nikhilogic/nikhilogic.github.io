@@ -4,65 +4,47 @@ appNgNgrid.controller('GithubdsController', ['$scope', '$timeout',
                
         
         $scope.loadingRecords = false;
-        $scope.aSortcolumn = '';
-        $scope.aSortdesc = false;
+        $scope.shows = true;
         $scope.data = [];
         //$scope.data = JSON.parse($scope.jsonData);
         $scope.columnDefs = [
             {
                 Name: 'id',
-                DisplayName: 'String(Default Type) Column',
-                GlyphFn: function (r) { return 'glyphicon-king'; },
-                BadgeFn: function (r) { return r[this.Name].length; },
-                ClassFn: function (r) { return 'text-primary'; }
+                DisplayName: 'Id'                           
+                
             },
              {
                  Name: 'type',
-                 DisplayName: 'String(Default Type) Column',
-                 GlyphFn: function (r) { return 'glyphicon-king'; },
-                 BadgeFn: function (r) { return r[this.Name].length; },
-                 ClassFn: function (r) { return 'text-primary'; }
+                 DisplayName: 'type'                 
              },
               {
-                  Name: 'actor',
-                  DisplayName: 'String(Default Type) Column',
-                  GlyphFn: function (r) { return 'glyphicon-king'; },
-                  BadgeFn: function (r) { return r[this.Name].length; },
-                  ClassFn: function (r) { return 'text-primary'; },
-                  TextFn: function (r) { return r[this.Name].avatar_url; },
-                  ImgFn: function (r) { return r[this.Name].avatar_url; },
-                  ImgClassFn: function (r) { return 'img-responsive'; }
+                  Name: 'actor.avatar_url',
+                  DisplayName: 'actor',                  
+                  ImgFn: function (r) {                      
+                      return r.actor.avatar_url;
+                  },
+                  ImgClassFn: function (r) {                      
+                      return 'img-responsive thumbnail-img';
+                  }
               },
                {
                    Name: 'repo',
-                   DisplayName: 'String(Default Type) Column',
-                   GlyphFn: function (r) { return 'glyphicon-king'; },
-                   BadgeFn: function (r) { return r[this.Name].length; },
-                   ClassFn: function (r) { return 'text-primary'; },
+                   DisplayName: 'repo',
                    TextFn: function (r) { return r[this.Name].name; }
                    
                },
                 {
                     Name: 'payload',
-                    DisplayName: 'String(Default Type) Column',
-                    GlyphFn: function (r) { return 'glyphicon-king'; },
-                    BadgeFn: function (r) { return r[this.Name].length; },
-                    ClassFn: function (r) { return 'text-primary'; },
+                    DisplayName: 'payload',
                     TextFn: function (r) { return r[this.Name].description; }
                 },
                  {
                      Name: 'public',
-                     DisplayName: 'String(Default Type) Column',
-                     GlyphFn: function (r) { return 'glyphicon-king'; },
-                     BadgeFn: function (r) { return r[this.Name].length; },
-                     ClassFn: function (r) { return 'text-primary'; }
+                     DisplayName: 'public'                     
                  },
                   {
                       Name: 'created_at',
-                      DisplayName: 'String(Default Type) Column',
-                      GlyphFn: function (r) { return 'glyphicon-king'; },
-                      BadgeFn: function (r) { return r[this.Name].length; },
-                      ClassFn: function (r) { return 'text-primary'; },
+                      DisplayName: 'created_at',                                            
                       ColumnType: 'ngNGridDate'
 
                   },

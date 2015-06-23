@@ -12,10 +12,15 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
         scope.pageSizeOptions = [10, 15, 20, 50, 100, 500, 1000];
         scope.gridCurrentPage = 1;
         scope.gridChildrenSortOrder = false;
-        scope.gridChildrenSortColumn = '';        
+        scope.gridChildrenSortColumn = '';
         scope.filterSelectionList = [];
         scope.distinctColValues = [];
-        scope.showSettings = true;
+        scope.showSettings = false;
+        scope.columnFilters = {};
+        scope.gridPageSize = 15;
+        scope.showRowNumbers = false;
+        scope.showRowSelector = false;
+        scope.gridHeightStretchBottomOffset = 0;
         /*
          * Grid scrolling
          * Sets the scroll area as per the stretch bottom offset or fixed height defined 
@@ -243,7 +248,7 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
                 scope.gridFiltersChanged({ filterColumnName: col.Name, filters: filtersAdded, isAdded: true });
             }
         }
-       
+
         /*
          * Grid Filters
          * Sets or removes the filters for columns
@@ -413,7 +418,7 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
                                 arrRows[j][colDates[c]] = new Date(arrRows[j][colDates[c]]);
                             }
                         }
-                        rowsToImport.push(arrRows[j]);                        
+                        rowsToImport.push(arrRows[j]);
                     }
                     //allow hosting control to override it
                     var importObj = { Rows: rowsToImport, CancelEvent: cancel };
@@ -515,18 +520,18 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
             rows: '=',
             rowsLoading: '=',
             rowsLoadingText: '@',
-            gridPageSize: '=initialPagesize',
-            gridSortColumn: '=initialSortcolumn',
-            gridSortOrder: '=initialSortdesc',
-            showRowNumbers: '=',
-            showRowSelector: '=',
+            gridPageSize: '=?initialPagesize',
+            gridSortColumn: '=?initialSortcolumn',
+            gridSortOrder: '=?initialSortdesc',
+            showRowNumbers: '=?',
+            showRowSelector: '=?',
             gridHeightFixed: '=',
-            gridHeightStretchBottomOffset: '=',
+            gridHeightStretchBottomOffset: '=?',
             gridFiltersChanged: '&',
             onDataImport: '&',
             onDataExport: '&',
-            addColumnFilters: '=',
-            columnFilters: '=',
+            addColumnFilters: '=?',
+            columnFilters: '=?',
             showSettings: '=?'
         },
         templateUrl: 'Templates/NgNgridTemplate.html',
