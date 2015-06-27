@@ -5,10 +5,54 @@
  * Version: 1.0
  * License: MIT
  */
-angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
+angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
 .directive('ngNgrid', function ($filter, $window, $timeout) {
 
     function link(scope, element, attrs) {
+
+        scope.rememberFilters = true;
+
+        //helper functions for persisting information
+        function setStorage(key, data) {
+            if (scope.rememberFilters) {
+                if (typeof data == 'object') {
+                    logDebug('SetStorage()  Key:' + key + '  Value(Original): ' + data);
+                    data = JSON.stringify(data);
+                }
+                logDebug('SetStorage()  Key:' + key + '  Value(Stringified): ' + data);
+                sessionStorage.setItem(key, data);
+            }
+        }
+
+        function getStorageOrDefault(key, defaultData) {
+            if (scope.rememberFilters) {
+                var savedData = sessionStorage.getItem(key);
+                logDebug('GetStorage()  Key:' + key + '  Value(Stringified): ' + savedData);
+                if (savedData == null) {
+                    setStorage(key, defaultData);
+                    logDebug('GetStorage()  Key:' + key + '  Value(Default): ' + defaultData);
+                    return defaultData;
+                }
+                else {
+
+                    try {
+                        savedData = JSON.parse(savedData)
+                    }
+                    catch (e) {
+                        //not a json object return simple type
+                    }
+                    logDebug('GetStorage()  Key:' + key + '  Value(Original): ' + savedData);
+                    return savedData;
+                }
+            }
+        }
+
+        function removeStorage(key) {
+            if (scope.rememberFilters) {
+                sessionStorage.removeItem(key);
+            }
+        }
+
         scope.pageSizeOptions = [10, 15, 20, 50, 100, 500, 1000];
         scope.gridCurrentPage = 1;
         scope.gridChildrenSortOrder = false;
@@ -16,7 +60,7 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
         scope.filterSelectionList = [];
         scope.distinctColValues = [];
         scope.showSettings = false;
-        scope.columnFilters = {};
+        scope.columnFilters = getStorageOrDefault(window.location.href + '/ngNGridColFilters', {});
         scope.gridPageSize = 15;
         scope.showRowNumbers = false;
         scope.showRowSelector = false;
@@ -235,7 +279,8 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
             if (scope.isColFilterApplied(col.Name)) {
                 //clear all filters
                 delete scope.columnFilters[col.Name];
-                scope.gridFiltersChanged({ filterColumnName: col.Name, filters: [''], isAdded: false });
+                scope.gridFiltersChanged(col.Name, [''], false);
+
             }
             else {
                 var filtersAdded = [];
@@ -244,8 +289,8 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
                     scope.addColumnFilters(col.Name, [col.DropdownFilteredObjects[i].DistinctValue]);
                     filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);
                 }
-                //notify parent control that filters have changed
-                scope.gridFiltersChanged({ filterColumnName: col.Name, filters: filtersAdded, isAdded: true });
+                //notify parent control that filters have changed                
+                scope.gridFiltersChanged(col.Name, filtersAdded, true);
             }
         }
 
@@ -304,11 +349,11 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
 
                 if (filtersAdded.length > 0) {
                     //notify hosting control that filters have changed
-                    scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersAdded, isAdded: true });
+                    scope.gridFiltersChanged(colName, filtersAdded, true);
                 }
                 if (filtersRemoved.length > 0) {
                     //notify hosting control that filters have changed
-                    scope.gridFiltersChanged({ filterColumnName: colName, filters: filtersRemoved, isAdded: false });
+                    scope.gridFiltersChanged(colName, filtersRemoved, false);
                 }
             }
         }
@@ -332,7 +377,7 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
 
         scope.clearAllFilters = function () {
             scope.columnFilters = [];
-            scope.gridFiltersChanged({ filterColumnName: '', filters: [''], isAdded: false });
+            scope.gridFiltersChanged('', [''], false);
         }
 
         scope.anyFiltersExist = function () {
@@ -508,6 +553,16 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
             }
         }
 
+        scope.gridFiltersChanged = function (colName, colFilters, colFilterAdded) {
+            scope.notifyGridFiltersChanged({ filterColumnName: colName, filters: colFilters, isAdded: colFilterAdded });
+
+            if (colName == '') {
+                removeStorage(window.location.href + '/ngNGridColFilters');
+            }
+            else {
+                setStorage(window.location.href + '/ngNGridColFilters', scope.columnFilters);
+            }
+        }
     }
 
     return {
@@ -527,12 +582,12 @@ angular.module('ngNgrid', ['ui.bootstrap','ngAnimate'])
             showRowSelector: '=?',
             gridHeightFixed: '=',
             gridHeightStretchBottomOffset: '=?',
-            gridFiltersChanged: '&',
+            notifyGridFiltersChanged: '&',
             onDataImport: '&',
             onDataExport: '&',
             addColumnFilters: '=?',
-            columnFilters: '=?',
-            showSettings: '=?'
+            showSettings: '=?',
+            rememberFilters: '=?'
         },
         templateUrl: 'Templates/NgNgridTemplate.html',
         link: link

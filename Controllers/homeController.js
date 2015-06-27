@@ -239,7 +239,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                {
                    Name: 'Col7Input',
                    DisplayName: 'ngNGridInput Column',
-                   ClassFn: function (r) { return 'label label-warning'; },
+                   ClassFn: function (r) { return 'label-warning'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    TooltipFn: function (r) { return 'asd'; },
                    NullOrEmptyFn: function(r) {return 'Edit me';},
@@ -251,7 +251,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    DisplayName: 'ngNGridSelect Column',
                    ColumnType: 'ngNGridSelect',
                    SelectFn: function (row) { return $scope.optionList; },
-                   ClassFn: function (r) { return 'label label-danger'; },
+                   ClassFn: function (r) { return 'label-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
                    SelectKey: 'myKey',
                    SelectValue: 'myVal'
@@ -272,6 +272,21 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
             else {
                 c[key] = value;
             }
+        }
+
+        $scope.exportScript = function () {
+            
+            for (i = 0; i < $scope.columnDefs.length ; i++)
+            {
+                
+                logDebug(formatJson($scope.columnDefs[i]));
+                                
+            }
+            
+          
+            //var blobObject = new Blob([angular.toJson($scope.columnDefs)]);
+            //window.navigator.msSaveBlob(blobObject, 'ngNGridColumnDefs.txt'); // The user only has the option of clicking the Save button.            
+            
         }
        
     }]);

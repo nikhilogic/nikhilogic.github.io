@@ -9,19 +9,20 @@
 <body>
 
     <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
-        <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">            
+        <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">
             <div class="row">
                 <div class="col-md-{{colspan}}">
-                    <span class="btn-group">
+                    <button type="button" class="btn btn-success btn-sm" ng-click="exportScript()">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        Download Script
+                    </button>
+                    <button type="button" class="btn-sm btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
+                        <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
+                        {{runMode ? 'Design Mode' : 'Run Mode'}}
+                    </button>
+                    <span class="btn-group btn-group-sm">
                         <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
                         <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
-                    </span>
-
-                    <span class="btn-group">
-                        <button type="button" class="btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
-                            <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
-                            {{runMode ? 'Switch to Design Mode' : 'Switch to Run Mode'}}
-                        </button>
                     </span>
                     <br /><br />
                     <span ng-show="!runMode" class="ngngrid-animate-show">
@@ -44,16 +45,15 @@
 
                         </accordion>
                     </span>
-                </div>                
+                </div>
                 <div class="col-md-{{12-colspan}}">
 
                     <ng-ngrid rows="data"
                               column-definitions="columnDefs"
                               child-columndefinitions="[childColumndef1,childColumndef2]"
-                              child-propertynames="['Children1','Children2']"                                                            
+                              child-propertynames="['Children1','Children2']"
                               rows-loading="loadingRecords"
-                              rows-loading-text="Loading records have patience"                                                            
-                              >
+                              rows-loading-text="Loading records have patience">
                     </ng-ngrid>
                 </div>
             </div>

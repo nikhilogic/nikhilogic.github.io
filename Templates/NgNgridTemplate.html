@@ -46,14 +46,15 @@
             </div>
             <div class="navbar-right">
                 <span class="btn-group">
-                    <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}-{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
+                    <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}</b> - <b>{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
                     <span>
                         <pagination class="pagination" onmouseover="" style="cursor: pointer;margin:0" boundary-links="true" total-items="rows.length" ng-model="gridCurrentPage" items-per-page="gridPageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" max-size="5" rotate=""></pagination>
                     </span>
                 </span>
                 <span class="input-group" style="margin-top:-6px" data-toggle="tooltip" data-placement="right" title="Records per Page">
                     <span class="input-group-addon">
-                        <span class=" glyphicon glyphicon-th-list"></span>
+                        <!--<span class=" glyphicon glyphicon-th-list"></span>-->
+                        <b>Records</b> / <b>Page</b>
                     </span>
                     <select class="form-control" ng-model="gridPageSize" ng-options="number for number in pageSizeOptions"></select>
                 </span>
@@ -171,10 +172,8 @@
                             <span ng-show="c.BadgeFn" class="badge">{{c.BadgeFn(row)}}</span>
                         </span>
                         <span ng-switch-when="ngNGridSelect" class="input-group" ng-init="newSelectVal = getColValue(c,row)">
-                            <span ng-show="c.ClassFn" class="input-group-addon">
-                                <span ng-class="c.ClassFn(row)">
-                                    <span ng-if="c.GlyphFn" class="glyphicon" ng-class="c.GlyphFn(row)"></span>
-                                </span>
+                            <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">                              
+                                <span ng-if="c.GlyphFn" class="glyphicon" ng-class="c.GlyphFn(row)"></span>                               
                             </span>
                             <select ng-if="c.SelectValue != null" class="form-control" ng-model="newSelectVal" ng-options="o[c.SelectValue]  for o in  c.SelectFn(row)  track by o[c.SelectKey]" ng-change="row.isNgNgridDirty=true;setColValue(c,row,newSelectVal)" required>
                                 <option value="">Select</option>
@@ -188,11 +187,9 @@
                             {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </a>
-                        <span ng-switch-when="ngNGridInput" ng-class="c.GlyphFn?'input-group':''">
-                            <span ng-if="c.GlyphFn" class="input-group-addon">
-                                <span ng-class="c.ClassFn(row)">
-                                    <span class="glyphicon" ng-class="c.GlyphFn(row)"></span>
-                                </span>
+                        <span ng-switch-when="ngNGridInput" class="input-group">
+                            <span ng-if="c.GlyphFn" class="input-group-addon" ng-class="c.ClassFn(row)">
+                                <span class="glyphicon" ng-class="c.GlyphFn(row)"></span>
                             </span>
                             <input class="form-control" ng-init="newInputVal = getColValue(c,row)" ng-model="newInputVal" ng-readonly="c.DisabledFn(row)" ng-change="row.isNgNgridDirty=true;setColValue(c,row,newInputVal)" placeholder="{{c.NullOrEmptyFn(row)}}" type="{{c.InputTypeFn(row)}}" />
                         </span>
