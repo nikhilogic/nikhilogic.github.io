@@ -110,8 +110,9 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                FilterClassFn: function (c) { return 'label-danger'; },
                BadgeFn: function (r) { return r[this.Name].length; }
            }
-        ];
-               
+        ];               
+
+        $scope.childColDefs = [$scope.childColumndef1, $scope.childColumndef2];
 
         $scope.columnDefs = [
                {
@@ -257,7 +258,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    SelectValue: 'myVal'
                }               
         ];
-
+        
         $scope.filterColumnDemo = function (value)
         {
             logDebug(formatJson(value));            
@@ -274,18 +275,48 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
             }
         }
 
-        $scope.exportScript = function () {
-            
-            for (i = 0; i < $scope.columnDefs.length ; i++)
-            {
-                
-                logDebug(formatJson($scope.columnDefs[i]));
-                                
+        $scope.getScriptForCols = function (colObjs) {
+            var strScript = '';
+            for (j = 0; j < colObjs.length ; j++) {
+                strScript += '[\r\n';
+                for (i = 0; i < colObjs[j].length ; i++) {
+
+                    strScript += '{\r\n';
+                    //logDebug(formatJson($scope.columnDefs[i]));
+                    Object.getOwnPropertyNames(colObjs[j][i]).forEach(function (val, idx, array) {
+                        //logDebug(val + ':' + $scope.columnDefs[i][val]);
+                        if (val != '$$hashKey') {
+                            if (typeof colObjs[j][i][val] == 'string') {
+                                strScript += val + ':\'' + colObjs[j][i][val] + '\',\r\n';
+                            }
+                            else if (colObjs[j][i][val] == undefined) {
+                                strScript += val + ':null,\r\n';
+                            }
+                            else {
+                                strScript += val + ':' + colObjs[j][i][val] + ',\r\n';
+                            }
+
+                        }
+                    });
+                    strScript = strScript.substring(0, strScript.length - 3);
+                    strScript += '\r\n';
+
+                    strScript += '},\r\n';
+                }
+                strScript = strScript.substring(0, strScript.length - 3);
+                strScript += '\r\n];\r\n';
             }
-            
-          
-            //var blobObject = new Blob([angular.toJson($scope.columnDefs)]);
-            //window.navigator.msSaveBlob(blobObject, 'ngNGridColumnDefs.txt'); // The user only has the option of clicking the Save button.            
+            return strScript;
+        }
+
+        $scope.exportScript = function () {
+            var strScript='';
+            strScript +=  $scope.getScriptForCols([$scope.columnDefs]);
+            strScript +=  $scope.getScriptForCols($scope.childColDefs);
+            logDebug(strScript);
+                      
+            var blobObject = new Blob([strScript]); //[angular.toJson($scope.columnDefs)]);
+            window.navigator.msSaveOrOpenBlob(blobObject, 'ngNGridColumnDefs.txt'); // The user only has the option of clicking the Save button.            
             
         }
        

@@ -36,7 +36,7 @@
                         </h3>
 
                         <accordion close-others="false" ng-init="open= true">
-                            <accordion-group ng-repeat="(key,value) in c" ng-if="key != 'DropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'" is-open="open">
+                            <accordion-group ng-repeat="(key,value) in c" ng-if="key != 'ngNgridDropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'" is-open="open">
                                 <accordion-heading>
                                     {{key}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': open, 'glyphicon-chevron-right': !open}"></i>
                                 </accordion-heading>
@@ -45,15 +45,38 @@
 
                         </accordion>
                     </span>
+
+                    <span ng-repeat="childColDef in childColDefs" ng-show="!runMode" class="ngngrid-animate-show">
+                        <select class="form-control" ng-model="childCol" ng-options="o.DisplayName  for o in  childColDef  track by o.Name" ng-change="" required ng-disabled="runMode">
+                            <option value="">Select Child Column {{$index}}</option>
+                        </select>
+                        <h3>
+                            <span class="label label-info">{{childCol.DisplayName}}</span>
+                        </h3>
+
+                        <accordion close-others="false" ng-init="open= true">
+                            <accordion-group ng-repeat="(key,value) in childCol" ng-if="key != 'ngNgridDropdownFilteredObjects' && key != 'isNgNgridDropdownOpen'" is-open="open">
+                                <accordion-heading>
+                                    {{key}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': open, 'glyphicon-chevron-right': !open}"></i>
+                                </accordion-heading>
+                                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(childCol,key,value)"></textarea>
+                            </accordion-group>
+
+                        </accordion>
+                    </span>
+
+
+
                 </div>
                 <div class="col-md-{{12-colspan}}">
 
                     <ng-ngrid rows="data"
                               column-definitions="columnDefs"
-                              child-columndefinitions="[childColumndef1,childColumndef2]"
+                              child-columndefinitions="childColDefs"
                               child-propertynames="['Children1','Children2']"
                               rows-loading="loadingRecords"
-                              rows-loading-text="Loading records have patience">
+                              rows-loading-text="Loading records have patience"
+                              show-settings="true">
                     </ng-ngrid>
                 </div>
             </div>

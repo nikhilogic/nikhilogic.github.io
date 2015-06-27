@@ -46,14 +46,13 @@
             </div>
             <div class="navbar-right">
                 <span class="btn-group">
-                    <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}</b> - <b>{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
+                    <label class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}-{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></label>
                     <span>
                         <pagination class="pagination" onmouseover="" style="cursor: pointer;margin:0" boundary-links="true" total-items="rows.length" ng-model="gridCurrentPage" items-per-page="gridPageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" max-size="5" rotate=""></pagination>
                     </span>
                 </span>
                 <span class="input-group" style="margin-top:-6px" data-toggle="tooltip" data-placement="right" title="Records per Page">
                     <span class="input-group-addon">
-                        <!--<span class=" glyphicon glyphicon-th-list"></span>-->
                         <b>Records</b> / <b>Page</b>
                     </span>
                     <select class="form-control" ng-model="gridPageSize" ng-options="number for number in pageSizeOptions"></select>
@@ -128,7 +127,7 @@
                                 </span>
                             </li>
                             <li class="divider"></li>
-                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.DropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">
+                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.ngNgridDropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">
                                 <span class="glyphicon" ng-class="isColFiltered(c.Name,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'"></span>
                                 <small style="font-weight:normal">
                                     <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">
@@ -172,8 +171,8 @@
                             <span ng-show="c.BadgeFn" class="badge">{{c.BadgeFn(row)}}</span>
                         </span>
                         <span ng-switch-when="ngNGridSelect" class="input-group" ng-init="newSelectVal = getColValue(c,row)">
-                            <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">                              
-                                <span ng-if="c.GlyphFn" class="glyphicon" ng-class="c.GlyphFn(row)"></span>                               
+                            <span ng-show="c.ClassFn" class="input-group-addon" ng-class="c.ClassFn(row)">
+                                <span ng-if="c.GlyphFn" class="glyphicon" ng-class="c.GlyphFn(row)"></span>
                             </span>
                             <select ng-if="c.SelectValue != null" class="form-control" ng-model="newSelectVal" ng-options="o[c.SelectValue]  for o in  c.SelectFn(row)  track by o[c.SelectKey]" ng-change="row.isNgNgridDirty=true;setColValue(c,row,newSelectVal)" required>
                                 <option value="">Select</option>
@@ -198,7 +197,7 @@
                             {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </span>
-                        <img ng-if="c.ImgFn" ng-class="c.ImgClassFn(row)" src="{{c.ImgFn(row)}}" />
+                        <img ng-if="c.ImgFn" ng-class="c.ImgClassFn(row)" ng-src="c.ImgFn(row)" />
                     </span>
                 </td>
             </tr>
@@ -251,7 +250,7 @@
                                         {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}
                                         <span ng-show="childCol.BadgeFn" class="badge" ng-class="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
                                     </a>
-                                    <span ng-switch-when="ngNGridInput" ng-class="childCol.GlyphFn?'input-group':''">
+                                    <span ng-switch-when="ngNGridInput" class="input-group">
                                         <span ng-if="childCol.GlyphFn" class="input-group-addon" ng-class="childCol.ClassFn(row)">
                                             <span class="glyphicon" ng-class="childCol.GlyphFn(row)"></span>
                                         </span>

@@ -16,10 +16,10 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         function setStorage(key, data) {
             if (scope.rememberFilters) {
                 if (typeof data == 'object') {
-                    logDebug('SetStorage()  Key:' + key + '  Value(Original): ' + data);
+                    //logDebug('SetStorage()  Key:' + key + '  Value(Original): ' + data);
                     data = JSON.stringify(data);
                 }
-                logDebug('SetStorage()  Key:' + key + '  Value(Stringified): ' + data);
+                //logDebug('SetStorage()  Key:' + key + '  Value(Stringified): ' + data);
                 sessionStorage.setItem(key, data);
             }
         }
@@ -27,10 +27,10 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         function getStorageOrDefault(key, defaultData) {
             if (scope.rememberFilters) {
                 var savedData = sessionStorage.getItem(key);
-                logDebug('GetStorage()  Key:' + key + '  Value(Stringified): ' + savedData);
+                //logDebug('GetStorage()  Key:' + key + '  Value(Stringified): ' + savedData);
                 if (savedData == null) {
                     setStorage(key, defaultData);
-                    logDebug('GetStorage()  Key:' + key + '  Value(Default): ' + defaultData);
+                    //logDebug('GetStorage()  Key:' + key + '  Value(Default): ' + defaultData);
                     return defaultData;
                 }
                 else {
@@ -41,7 +41,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                     catch (e) {
                         //not a json object return simple type
                     }
-                    logDebug('GetStorage()  Key:' + key + '  Value(Original): ' + savedData);
+                    //logDebug('GetStorage()  Key:' + key + '  Value(Original): ' + savedData);
                     return savedData;
                 }
             }
@@ -285,9 +285,9 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             else {
                 var filtersAdded = [];
                 //apply the filters for all values which are filtered in drop down list                
-                for (var i = 0; i < col.DropdownFilteredObjects.length; i++) {
-                    scope.addColumnFilters(col.Name, [col.DropdownFilteredObjects[i].DistinctValue]);
-                    filtersAdded.push(col.DropdownFilteredObjects[i].DistinctValue);
+                for (var i = 0; i < col.ngNgridDropdownFilteredObjects.length; i++) {
+                    scope.addColumnFilters(col.Name, [col.ngNgridDropdownFilteredObjects[i].DistinctValue]);
+                    filtersAdded.push(col.ngNgridDropdownFilteredObjects[i].DistinctValue);
                 }
                 //notify parent control that filters have changed                
                 scope.gridFiltersChanged(col.Name, filtersAdded, true);
