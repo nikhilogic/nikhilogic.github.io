@@ -89,6 +89,11 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             return Math.ceil(scope.rows.length / scope.gridPageSize);
         }
 
+        scope.totalPages = function (rowLength, pageSize) {
+            return Math.ceil(rowLength / pageSize);
+        }
+
+
         /*
          * Grid Sorting
          * Toggles the sort on user interaction
@@ -258,7 +263,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         * Grid Filters
         * Sets the distinct values for the list in the column on expanding the filter menu
         */
-        scope.setDistinctColValuesFiltered = function (col) {
+        scope.setDistinctColValuesFiltered = function (col) {            
             var filteredRows = scope.gridFilteredRows;
             //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
             if (filteredRows.length == scope.rows.length || (scope.columnFilters[col.Name] != null && scope.columnFilters[col.Name].IsFirstFilter)) {
@@ -267,7 +272,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             else if (!scope.isColFilterApplied(col.Name)) {
                 // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
                 scope.distinctColValues[col.Name] = scope.generateDistinctColValues(col, filteredRows);
-            }
+            }            
         }
 
         /*
@@ -298,7 +303,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
          * Grid Filters
          * Sets or removes the filters for columns
          */
-        scope.addColumnFilters = function (colName, filters) {
+        scope.addColumnFilters = function (colName, filters, ignoreIfExists) {
             if (filters != null) {
                 var filtersAdded = [];
                 var filtersRemoved = [];
@@ -329,7 +334,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                         }
                         filtersAdded.push(filterString);
                     }
-                    else {
+                    else if (!ignoreIfExists) {
 
                         //item exists toggle - remove it
                         scope.columnFilters[colName].splice(posFilter, 1);
@@ -591,11 +596,6 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         },
         templateUrl: 'Templates/NgNgridTemplate.html',
         link: link
-    };
-})
-.filter('ngNgridPageOffset', function () {
-    return function (input, start) {
-        return input.slice(start);
     };
 })
 //.run(function ($templateCache) {

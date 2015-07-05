@@ -10,18 +10,20 @@
 
     <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
         <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">
+                     
+
             <div class="row">
                 <div class="col-md-{{colspan}}">
                     <button type="button" class="btn btn-success btn-sm" ng-click="exportScript()">
                         <span class="glyphicon glyphicon-download-alt"></span>
-                        Download Script
+                        Download Column Definition Script
                     </button>
                     <button type="button" class="btn-sm btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
                         <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
                         {{runMode ? 'Design Mode' : 'Run Mode'}}
                     </button>
                     <span class="btn-group btn-group-sm">
-                        <button class="btn btn-primary" ng-disabled="colspan == 1" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
+                        <button class="btn btn-primary" ng-disabled="colspan == 2" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
                         <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
                     </span>
                     <br /><br />
@@ -59,7 +61,9 @@
                                 <accordion-heading>
                                     {{key}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': open, 'glyphicon-chevron-right': !open}"></i>
                                 </accordion-heading>
-                                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(childCol,key,value)"></textarea>
+                                <div class="panel-body">
+                                    <textarea class="form-control" ng-model="value" ng-change="applyChange(childCol,key,value)"></textarea>
+                                </div>
                             </accordion-group>
 
                         </accordion>
@@ -76,7 +80,7 @@
                               child-propertynames="['Children1','Children2']"
                               rows-loading="loadingRecords"
                               rows-loading-text="Loading records have patience"
-                              show-settings="true">
+                              >
                     </ng-ngrid>
                 </div>
             </div>
@@ -107,8 +111,8 @@
         }
 
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-animate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
     <script src="./Modules/ng-ngrid.js"></script>
