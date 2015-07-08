@@ -266,13 +266,20 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
             return value.indexOf('Fn') == -1;
         }
 
-        $scope.applyChange = function (c, key, value) {            
-            if (key.indexOf('Fn') != -1) {
-                c[key] = eval('(' + value + ')');
+        $scope.applyChange = function (c1, key, value) {
+            for (var i = 0; i < $scope.columnDefs.length; i++) {
+                if ($scope.columnDefs[i].Name == c1.Name) {
+                    if (key.indexOf('Fn') != -1) {
+                        $scope.columnDefs[i][key] = eval('(' + value + ')');
+                    }
+                    else {
+                        logDebug(c1[key] + '  ' + value);
+                        $scope.columnDefs[i][key] = value;                        
+                    }
+                }
             }
-            else {
-                c[key] = value;
-            }
+
+           
         }
 
         $scope.getScriptForCols = function (colObjs) {

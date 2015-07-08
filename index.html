@@ -42,7 +42,9 @@
                                 <accordion-heading>
                                     {{key}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': open, 'glyphicon-chevron-right': !open}"></i>
                                 </accordion-heading>
-                                <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(c,key,value)"></textarea>
+                                <span>
+                                    <textarea rows="4" class="form-control" ng-model="value" ng-change="applyChange(c,key,value)" ng-readonly="key=='Name'"></textarea>
+                                </span>
                             </accordion-group>
 
                         </accordion>
