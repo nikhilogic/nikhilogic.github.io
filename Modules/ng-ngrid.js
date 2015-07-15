@@ -2,7 +2,7 @@
  * ng-ngrid
  * https://github.com/nikhilogic/ngNGrid
 
- * Version: 1.0
+ * Version: 1.2
  * License: MIT
  */
 angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
