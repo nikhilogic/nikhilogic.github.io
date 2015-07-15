@@ -8,6 +8,7 @@
 angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
 .directive('ngNgrid', function ($filter, $window, $timeout) {
 
+
     function link(scope, element, attrs) {
 
         scope.rememberFilters = true;
@@ -64,7 +65,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         scope.gridPageSize = 15;
         scope.showRowNumbers = false;
         scope.showRowSelector = false;
-        scope.gridHeightStretchBottomOffset = 0;
+        //scope.gridHeightStretchBottomOffset = 0;
         /*
          * Grid scrolling
          * Sets the scroll area as per the stretch bottom offset or fixed height defined 
@@ -263,7 +264,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         * Grid Filters
         * Sets the distinct values for the list in the column on expanding the filter menu
         */
-        scope.setDistinctColValuesFiltered = function (col) {            
+        scope.setDistinctColValuesFiltered = function (col) {
             var filteredRows = scope.gridFilteredRows;
             //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
             if (filteredRows.length == scope.rows.length || (scope.columnFilters[col.Name] != null && scope.columnFilters[col.Name].IsFirstFilter)) {
@@ -272,7 +273,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             else if (!scope.isColFilterApplied(col.Name)) {
                 // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
                 scope.distinctColValues[col.Name] = scope.generateDistinctColValues(col, filteredRows);
-            }            
+            }
         }
 
         /*
@@ -372,7 +373,10 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             if (filterString != null) {
                 filterString = filterString.toString().toLowerCase();
                 if (scope.columnFilters[colName] != null) {
-                    return (scope.columnFilters[colName].indexOf(filterString) > -1);
+                    var cmp = (scope.columnFilters[colName].indexOf(filterString) > -1);
+                    //logDebug('org:' + scope.columnFilters[colName] + ' filter:' + filterString + ' cmp:'+ cmp);
+
+                    return cmp;
                 }
             }
             else {
@@ -529,31 +533,34 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             }
         }
 
-        scope.updateDateFilter = function (colName, StartDate, EndDate) {
-            if (StartDate != null && EndDate != null) {
-                EndDate.setHours(23);
-                EndDate.setMinutes(59);
-                EndDate.setSeconds(59)
-                scope.updateRangeFilter(colName, StartDate, EndDate, false);
-            }
-        }
-
-        scope.updateNumberFilter = function (colName, StartNumber, EndNumber) {
-            scope.updateRangeFilter(colName, StartNumber, EndNumber, true);
-        }
-
-        scope.updateRangeFilter = function (colName, StartRange, EndRange, useDisplayValue) {
+        scope.updateRangeFilter = function (col, StartRange, EndRange) {
             if (StartRange != null && EndRange != null) {
-                var distinctValues = scope.distinctColValues[colName];
+
+                //for date range set end date to last moment of that day
+                if (col.ColumnType == 'ngNGridDate') {
+                    EndRange.setHours(23);
+                    EndRange.setMinutes(59);
+                    EndRange.setSeconds(59);
+                }
+
+                var distinctValues = scope.distinctColValues[col.Name];
                 var colFilters = [];
                 for (var i = 0; i < distinctValues.length; i++) {
-                    var propToAdd = useDisplayValue ? 'DisplayValue' : 'DistinctValue';
-                    if (distinctValues[i][propToAdd] >= StartRange && distinctValues[i][propToAdd] <= EndRange) {
+                    var objToCompare = null;
+                    if (col.ColumnType == 'ngNGridDate') {
+                        //cast it to date for comparision
+                        objToCompare = dateReviver(distinctValues[i]['DistinctValue']);
+                    }
+                    else {
+                        objToCompare = distinctValues[i]['DisplayValue'];
+                    }
+                    if (objToCompare >= StartRange && objToCompare <= EndRange) {
+                        //logDebug('compare ' + objToCompare + ' Start:' + StartRange + ' End:' + EndRange);
                         colFilters.push(distinctValues[i].DistinctValue);
                     }
                 }
                 if (colFilters.length > 0) {
-                    scope.addColumnFilters(colName, colFilters);
+                    scope.addColumnFilters(col.Name, colFilters);
                 }
             }
         }
@@ -568,6 +575,26 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                 setStorage(window.location.href + '/ngNGridColFilters', scope.columnFilters);
             }
         }
+
+        /*
+         * Customized from  https://msdn.microsoft.com/library/cc836466(v=vs.94).aspx
+         * The reviver function is often used to transform JSON representation of International Organization for Standardization (ISO) date strings into
+         * Coordinated Universal Time (UTC) format Date objects. This example uses JSON.parse to deserialize an ISO-formatted date string. The dateReviver 
+         * function returns Date objects for members that are formatted like ISO date strings.
+         */
+        function dateReviver(dateString) {
+            var a;
+            a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z*$/.exec(dateString);
+            if (a) {
+                return new Date(+a[1], +a[2] - 1, +a[3], +a[4],
+                                +a[5], +a[6]);
+            }
+            return dateString;
+        };
+
+
+
+
     }
 
     return {
@@ -587,7 +614,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             showRowSelector: '=?',
             gridHeightFixed: '=',
             gridHeightStretchBottomOffset: '=?',
-            notifyGridFiltersChanged: '&',
+            notifyGridFiltersChanged: '&gridFiltersChanged',
             onDataImport: '&',
             onDataExport: '&',
             addColumnFilters: '=?',
@@ -598,6 +625,3 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         link: link
     };
 })
-//.run(function ($templateCache) {
-//    $templateCache.put('Templates/NgNgridTemplate.html', '');
-//});

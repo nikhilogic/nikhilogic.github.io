@@ -1,11 +1,4 @@
-﻿<!--/*
- * ng-ngrid
- * https://github.com/nikhilogic/ngNGrid
-
- * Version: 1.0
- * License: MIT
- */-->
-<div ng-style="getStyle()">
+﻿<div ng-style="getStyle()">
     <nav id="ngGridToolbar" class="navbar-form navbar-default navbar-static-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-left">
@@ -95,13 +88,13 @@
                             <li class="ngngrid-dropdown" ng-if="c.ColumnType=='ngNGridDate'">
                                 <span class="input-group" style="padding-bottom:5px">
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-muted"></span></span>
-                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateDateFilter(c.Name,ngNgridStartDate,ngNgridEndDate)" />
+                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridStartDate" is-open="datepickerstartopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerstartopen=true" placeholder="From" ng-change="updateRangeFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
                                 <span class="input-group">
                                     <span class="input-group-addon">
                                         <span class="text-muted glyphicon glyphicon-calendar"></span>
                                     </span>
-                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridEndDate" is-open="datepickerendopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerendopen=true" placeholder="To" ng-change="updateDateFilter(c.Name,ngNgridStartDate,ngNgridEndDate)" />
+                                    <input type="date" class="form-control" datepicker-popup ng-model="ngNgridEndDate" is-open="datepickerendopen" date-disabled="false" ng-required="true" close-text="Close" datepicker-append-to-body="true" ng-click="datepickerendopen=true" placeholder="To" ng-change="updateRangeFilter(c,ngNgridStartDate,ngNgridEndDate)" />
                                 </span>
                             </li>
                             <li class="ngngrid-dropdown" ng-if="c.ColumnType=='ngNGridNumber'">
@@ -109,13 +102,13 @@
                                     <span class="input-group-addon">
                                         #
                                     </span>
-                                    <input type="number" class="form-control" ng-model="ngNgridStartNumber" ng-required="true" placeholder="From" ng-change="updateNumberFilter(c.Name,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                    <input type="number" class="form-control" ng-model="ngNgridStartNumber" ng-required="true" placeholder="From" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
                                 </span>
                                 <span class="input-group">
                                     <span class="input-group-addon">
                                         #
                                     </span>
-                                    <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateNumberFilter(c.Name,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                    <input type="number" class="form-control" ng-model="ngNgridEndNumber" ng-required="true" placeholder="To" ng-change="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
                                 </span>
                             </li>
                             <li ng-if="c.ColumnType=='ngNGridDate' || c.ColumnType=='ngNGridNumber'" class="divider"></li>
