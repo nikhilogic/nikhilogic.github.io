@@ -19,7 +19,9 @@ appNgNgrid.controller('GithubdsController', ['$scope', '$timeout',
              },
               {
                   Name: 'actor.avatar_url',
-                  DisplayName: 'actor',                  
+                  DisplayName: 'actor',
+                  ColumnType: 'ngNGridLink',
+                  UrlFn: function(r){return r.actor.avatar_url;},
                   ImgFn: function (r) {                      
                       return r.actor.avatar_url;
                   },
@@ -45,7 +47,8 @@ appNgNgrid.controller('GithubdsController', ['$scope', '$timeout',
                   {
                       Name: 'created_at',
                       DisplayName: 'created_at',                                            
-                      ColumnType: 'ngNGridDate'
+                      ColumnType: 'ngNGridDate',
+                      DateFormatFn: function (r) { return 'dd:MM:yyyy hh:mm:ss';}
 
                   },
         ];

@@ -203,7 +203,7 @@
                             {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
                             <span ng-show="c.BadgeFn" class="badge" ng-class="c.BadgeClass">{{c.BadgeFn(row)}}</span>
                         </span>
-                        <img ng-if="c.ImgFn" ng-class="c.ImgClassFn(row)" ng-src="c.ImgFn(row)" />
+                        <img ng-if="c.ImgFn" ng-class="c.ImgClassFn(row)" ng-src="{{c.ImgFn(row)}}" />
                     </span>
                 </td>
             </tr>

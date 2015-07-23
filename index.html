@@ -10,31 +10,31 @@
 
     <div ng-app="NgNgridApp" style="width:100%;overflow-y:visible;overflow-x:visible">
         <div ng-controller="HomeController" ng-init="colspan=2;runMode=true">
-                     
+
 
             <div class="row">
                 <div class="col-md-{{colspan}}">
-                    <button type="button" class="btn btn-success btn-sm" ng-click="exportScript()">
+                    <button type="button" class="btn btn-sm" ng-click="exportScript()">
                         <span class="glyphicon glyphicon-download-alt"></span>
                         Download Column Definition Script
                     </button>
-                    <button type="button" class="btn-sm btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
+                    <!--<button type="button" class="btn-sm btn {{runMode?'btn-info':'btn-primary'}}" ng-click="runMode = !runMode">
                         <span class="glyphicon {{runMode?'glyphicon-edit':'glyphicon-play'}}"></span>
                         {{runMode ? 'Design Mode' : 'Run Mode'}}
-                    </button>
+                    </button>-->
                     <span class="btn-group btn-group-sm">
-                        <button class="btn btn-primary" ng-disabled="colspan == 2" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
-                        <button class="btn btn-info" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
+                        <button class="btn" ng-disabled="colspan == 2" ng-click="colspan = colspan - 1 "><span class="glyphicon glyphicon-chevron-left"></span></button>
+                        <button class="btn" ng-disabled="colspan == 6" ng-click="colspan = colspan + 1 "><span class="glyphicon glyphicon-chevron-right"></span></button>
                     </span>
                     <br /><br />
-                    <span ng-show="!runMode" class="ngngrid-animate-show">
-                        <select class="form-control" ng-model="c" ng-options="o.DisplayName  for o in  columnDefs  track by o.Name" ng-change="" required ng-disabled="runMode">
-                            <option value="">Select Column</option>
+                    <span class="ngngrid-animate-show">
+                        <select class="form-control" ng-model="c" ng-options="o.DisplayName  for o in  columnDefs  track by o.Name" ng-change="" required>
+                            <option value="">Select Column To Design on the Fly!</option>
                         </select>
 
 
-                        <h3>
-                            <span class="label label-info">{{c.DisplayName}}</span>
+                        <h3 ng-show="c">
+                            <span class="label label-primary" style="width:100%;display:inline-block">{{c.DisplayName}}</span>
                         </h3>
 
                         <accordion close-others="false" ng-init="open= true">
@@ -48,6 +48,13 @@
                             </accordion-group>
 
                         </accordion>
+                        <div style="margin:10px" ng-show="c==null">
+                            <p>
+                            Here, you can change column properties, <b>on-the-fly</b> & try out different features and experiment with grid behavior.</p>
+                            <p>
+                                You can also download the column definition script with <B>your changes</B> by clicking the download button above
+                            </p>
+                        </div>
                     </span>
 
                     <span ng-repeat="childColDef in childColDefs" ng-show="!runMode" class="ngngrid-animate-show">
@@ -82,8 +89,7 @@
                               child-propertynames="['Children1','Children2']"
                               rows-loading="loadingRecords"
                               rows-loading-text="Loading records have patience"
-                              grid-height-stretch-bottom-offset="0"
-                              >
+                              grid-height-stretch-bottom-offset="0">
                     </ng-ngrid>
                 </div>
             </div>
