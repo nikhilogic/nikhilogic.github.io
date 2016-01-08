@@ -1,8 +1,8 @@
-﻿<!--/*
+<!--/*
  * ng-ngrid
  * https://github.com/nikhilogic/ngNGrid
 
- * Version: 1.2
+ * Version: 1.3
  * License: MIT
  */-->
 <div ng-style="getStyle()">
@@ -69,9 +69,10 @@
                 </th>
                 <th ng-repeat="c in columnDefinitions" ng-hide="c.isNgNgridColumnHide" class="bg-primary">
                     <span ng-click="changeSort(c)" style="cursor:pointer">
-                        {{c.DisplayName}}
-                        <span ng-show="isSorted(c)" class="glyphicon" ng-class="gridSortOrder?'glyphicon-chevron-down':'glyphicon-chevron-up'"></span>
+                        {{c.DisplayName}}                        
+                        <span ng-show="isSorted(c)" class="glyphicon" ng-class="gridSortOrder?'glyphicon-chevron-down':'glyphicon-chevron-up'" ></span>
                     </span>
+                    <span style="cursor:pointer" ng-show="isColFilterApplied(c.Name)" class="glyphicon glyphicon-filter" ng-click="removeColFilters(c);$event.stopPropogation()"></span>
                 </th>
             </tr>
             <tr>
@@ -81,14 +82,13 @@
                 <th ng-repeat="c in columnDefinitions" ng-hide="c.isNgNgridColumnHide">
                     <div ng-hide="c.DisableFilter" class="input-group input-group-sm dropdown" dropdown auto-close="outsideClick" is-open="c.isNgNgridDropdownOpen" on-toggle="ondropDownToggle(c,'ngNgridDropdownFilter' + $index)" style="width:100%" ng-init="filterPageSize=15;filterCurrentPage=1">
 
-                        <span class="input-group input-group-sm">
-                            <input type="text" class="form-control" ng-model="dropDownFilterInput" ng-init="dropDownFilterInput=''" ng-focus="c.isNgNgridDropdownOpen=true" id="ngNgridDropdownFilter{{$index}}" ng-keypress="dropdownFilterKeyPress($event,c)" />
-                            <span class="input-group-btn">
-                                <button type="button" dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c.Name) ? 'btn-primary':'btn-default'">
-                                    <span class="glyphicon glyphicon-filter"></span>
-                                </button>
-                            </span>
-                        </span>
+                        <input type="text" class="form-control" ng-model="dropDownFilterInput" ng-init="dropDownFilterInput=''" ng-focus="c.isNgNgridDropdownOpen=true" id="ngNgridDropdownFilter{{$index}}" ng-keypress="dropdownFilterKeyPress($event,c)" ng-click="c.isNgNgridDropdownOpen=true" />
+                        <!--<span class="input-group-btn">
+        <button type="button" dropdown-toggle class="btn dropdown-toggle" ng-class="isColFilterApplied(c.Name) ? 'btn-primary':'btn-default'" ng-click="toggleColFilters(c)">
+            <span class="glyphicon glyphicon-filter"></span>
+        </button>
+    </span>-->
+
                         <ul class="dropdown-menu" ng-class="$index==columnDefinitions.length-1 ? 'dropdown-menu-right' :''" role="menu" style="overflow-y:auto;max-height:500px;width:auto;overflow-x:auto">
                             <li class="ngngrid-dropdown"><small class="text-muted">*Type & hit Enter to apply filters</small></li>
                             <li class="divider"></li>
@@ -132,8 +132,8 @@
                                     <span>Select/Unselect All</span>
                                 </span>
                             </li>
-                            <li class="divider"></li>
-                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.ngNgridDropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false | limitTo:filterPageSize : (filterCurrentPage-1)*filterPageSize" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">
+                            <li class="divider"></li>                            
+                            <li class="ngngrid-dropdown" ng-repeat="distinctObj in (c.ngNgridDropdownFilteredObjects = (distinctColValues[c.Name] | filter:{DisplayValue:dropDownFilterInput}:false)) | orderBy:false | limitTo:filterPageSize : (filterCurrentPage-1)*filterPageSize" ng-click="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">                            
                                 <span class="glyphicon" ng-class="isColFiltered(c.Name,distinctObj.DistinctValue)?'glyphicon-check':'glyphicon-unchecked'"></span>
                                 <small style="font-weight:normal">
                                     <span ng-class="c.FilterClassFn(distinctObj)" style="margin-right:2px">
@@ -147,7 +147,7 @@
                     </div>
                 </th>
             </tr>
-            <tr ng-repeat-start="row in (gridFilteredRows =  (rows | orderBy:gridSortColumn:gridSortOrder | filter:canShowRecord)) | limitTo : gridPageSize : (gridCurrentPage-1)*gridPageSize" style="border-bottom: none" ng-class="{'ngngrid-animaterow':row.isNgNgridUpdated,'info':row.isNgNgridSelected,'warning':row.isNgNgridDirty}">
+            <tr ng-repeat-start="row in (gridFilteredRows =  (rows | orderBy:gridSortColumn:gridSortOrder | filter:canShowRecord)) | limitTo : gridPageSize : (gridCurrentPage-1)*gridPageSize" style="border-bottom: none" ng-class="getRowClass(row)">                
                 <td ng-if="childColumndefinitions.length > 0">
                     <span ng-click="row.isNgNgridOpen = !row.isNgNgridOpen" ng-disabled="childRowsCount(row) <= 0" data-toggle="tooltip" title="{{row.isNgNgridOpen?'Collapse Details':'Expand Details'}}" style="cursor:pointer">
                         <span class="glyphicon" ng-class="row.isNgNgridOpen?'glyphicon-minus-sign':'glyphicon-plus-sign'"></span>
@@ -159,7 +159,7 @@
                     <span class="glyphicon" ng-class="row.isNgNgridSelected ?  'glyphicon-check': 'glyphicon-unchecked'"></span>
                 </td>
                 <td ng-repeat="c in columnDefinitions" ng-class="c.CellClassFn(row)" ng-hide="c.isNgNgridColumnHide">
-                    <span ng-show="$index ==0 && row.isNgNgridDirty" class='glyphicon glyphicon-edit'></span>
+                    <span ng-class="getRowGlyph($index,row)"></span>
                     <span ng-switch="c.ColumnType">
                         <label ng-switch-when="ngNGridLabel" class="label {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}">
                             <span ng-if="c.GlyphFn" class="glyphicon {{c.GlyphFn(row)}}"></span>
@@ -207,7 +207,7 @@
                     </span>
                 </td>
             </tr>
-            <tr ng-repeat-end ng-if="row.isNgNgridOpen" ng-class="{'ngngrid-animaterow':row.isNgNgridUpdated,'info':row.isNgNgridSelected,'warning':row.isNgNgridDirty}">
+            <tr ng-repeat-end ng-if="firstLoad = firstLoad || row.isNgNgridOpen" ng-show="row.isNgNgridOpen" ng-class="getRowClass(row)">
                 <td></td>
                 <td ng-show="showRowNumbers"></td>
                 <td ng-show="showRowSelector"></td>
@@ -221,7 +221,7 @@
                                 </span>
                             </th>
                         </tr>
-                        <tr ng-repeat="childRow in getChildRows(row,childPropertynames[$index]) | orderBy:gridChildrenSortColumn:gridChildrenSortOrder" ng-class="{'ngngrid-animaterow':childRow.isNgNgridUpdated,'info':childRow.isNgNgridSelected,'warning':childRow.isNgNgridDirty}">
+                        <tr ng-repeat="childRow in getChildRows(row,childPropertynames[$index]) | orderBy:gridChildrenSortColumn:gridChildrenSortOrder" ng-class="getRowClass(childRow)">
                             <td ng-repeat="childCol in childColDef" ng-class="childCol.CellClassFn(childRow)">
                                 <span ng-show="$index ==0 && childRow.isNgNgridDirty" class='glyphicon glyphicon-edit'></span>
                                 <span ng-switch="childCol.ColumnType">

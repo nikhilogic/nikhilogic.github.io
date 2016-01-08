@@ -1,13 +1,12 @@
-﻿/*
+/*
  * ng-ngrid
  * https://github.com/nikhilogic/ngNGrid
 
- * Version: 1.2
+ * Version: 1.3
  * License: MIT
  */
 angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
 .directive('ngNgrid', function ($filter, $window, $timeout) {
-
 
     function link(scope, element, attrs) {
 
@@ -54,7 +53,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             }
         }
 
-        scope.pageSizeOptions = [10, 15, 20, 50, 100, 500, 1000];
+        scope.pageSizeOptions = [1,5,10,15,20,25,50,100,500,1000];
         scope.gridCurrentPage = 1;
         scope.gridChildrenSortOrder = false;
         scope.gridChildrenSortColumn = '';
@@ -74,7 +73,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             var topPosition = document.getElementById('ngGridToolbar').getBoundingClientRect().bottom;
             var bottomPosition = 0;
             if (scope.gridHeightStretchBottomOffset != null) {
-                bottomPosition = scope.gridHeightStretchBottomOffset;
+                bottomPosition = scope.gridHeightStretchBottomOffset;                
             }
             else {
                 bottomPosition = window.innerHeight - scope.gridHeightFixed - document.getElementById('ngGridToolbar').getBoundingClientRect().top;
@@ -264,7 +263,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         * Grid Filters
         * Sets the distinct values for the list in the column on expanding the filter menu
         */
-        scope.setDistinctColValuesFiltered = function (col) {
+        scope.setDistinctColValuesFiltered = function (col) {            
             var filteredRows = scope.gridFilteredRows;
             //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
             if (filteredRows.length == scope.rows.length || (scope.columnFilters[col.Name] != null && scope.columnFilters[col.Name].IsFirstFilter)) {
@@ -273,7 +272,7 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             else if (!scope.isColFilterApplied(col.Name)) {
                 // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
                 scope.distinctColValues[col.Name] = scope.generateDistinctColValues(col, filteredRows);
-            }
+            }            
         }
 
         /*
@@ -282,23 +281,31 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         */
         scope.toggleColFilters = function (col) {
             //if Filter is already applied clear the filters
-            if (scope.isColFilterApplied(col.Name)) {
-                //clear all filters
-                delete scope.columnFilters[col.Name];
-                scope.gridFiltersChanged(col.Name, [''], false);
-
+            if (scope.isColFilterApplied(col.Name)) {              
+                scope.removeColFilters(col);
             }
             else {
-                var filtersAdded = [];
-                //apply the filters for all values which are filtered in drop down list                
-                for (var i = 0; i < col.ngNgridDropdownFilteredObjects.length; i++) {
-                    scope.addColumnFilters(col.Name, [col.ngNgridDropdownFilteredObjects[i].DistinctValue]);
-                    filtersAdded.push(col.ngNgridDropdownFilteredObjects[i].DistinctValue);
-                }
-                //notify parent control that filters have changed                
-                scope.gridFiltersChanged(col.Name, filtersAdded, true);
+                scope.addColFilters(col);
             }
         }
+
+        scope.addColFilters = function (col) {
+            var filtersAdded = [];
+            //apply the filters for all values which are filtered in drop down list                
+            for (var i = 0; i < col.ngNgridDropdownFilteredObjects.length; i++) {
+                scope.addColumnFilters(col.Name, [col.ngNgridDropdownFilteredObjects[i].DistinctValue]);
+                filtersAdded.push(col.ngNgridDropdownFilteredObjects[i].DistinctValue);
+            }
+            //notify parent control that filters have changed                
+            scope.gridFiltersChanged(col.Name, filtersAdded, true);
+        }
+
+        scope.removeColFilters = function (col) {
+            //clear all filters
+            delete scope.columnFilters[col.Name];
+            scope.gridFiltersChanged(col.Name, [''], false);
+        }
+               
 
         /*
          * Grid Filters
@@ -312,8 +319,20 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                 for (var i = 0; i < filters.length; i++) {
 
                     var filterString = filters[i];
+                    //var col = null;
+                    //for (var j = 0; j < scope.columnDefinitions.length; j++) {
+                    //    if (scope.columnDefinitions[j].Name == colName) {
+                    //        col = scope.columnDefinitions[j];
+                    //        break;
+                    //    }
+                    //}
 
+                    if (typeof filterString ==  'object') {
+                        filterString = JSON.stringify(filterString);
+                    }
+                    
                     filterString = filterString.toString().trim().toLowerCase();
+                                        
                     //Is this the first filter?
                     var firstFilter = false;
                     if (Object.keys(scope.columnFilters).length <= 0) {
@@ -371,11 +390,15 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         scope.isColFiltered = function (colName, filterString) {
             if (scope.columnFilters == null || scope.columnFilters == []) return false;
             if (filterString != null) {
+                if (typeof filterString == 'object') {
+                    filterString = JSON.stringify(filterString);
+                }                
                 filterString = filterString.toString().toLowerCase();
+
                 if (scope.columnFilters[colName] != null) {
                     var cmp = (scope.columnFilters[colName].indexOf(filterString) > -1);
                     //logDebug('org:' + scope.columnFilters[colName] + ' filter:' + filterString + ' cmp:'+ cmp);
-
+                    
                     return cmp;
                 }
             }
@@ -408,7 +431,9 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         }
 
         scope.canShowRecord = function (row) {
+            
             if (scope.columnFilters != null) {
+                
                 if (Object.keys(scope.columnFilters).length > 0) {
                     var rowMatched = true;
                     for (var prop in scope.columnFilters) {
@@ -425,8 +450,13 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                                 var splitProp = prop.split('.');
                                 field = row[splitProp[0]][splitProp[1]];
                             }
-                            field = field.toString();
-                            if (field.toLowerCase() == filtersForCol[j]) {
+                            if (typeof field == 'object') {
+                                field = JSON.stringify(field)
+                            }
+                            else {
+                                field = field.toString();
+                            }                            
+                            if (field.toLowerCase().trim() == filtersForCol[j].trim()) {                               
                                 colMatched = true;
                                 break;//out of the filter for that column
                             }
@@ -525,14 +555,21 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
         }
 
         scope.dropdownFilterKeyPress = function (event, c) {
-            if (event.keyCode == 13) {
-                scope.toggleColFilters(c);
+            
+            if (event.keyCode == 13) {                
+                if (scope.isColFilterApplied(c.Name)) {
+                    scope.removeColFilters(c);
+                }
+                scope.addColFilters(c);
                 c.isNgNgridDropdownOpen = false;
-                //sotpping enter from being propagated to parent dom elements.
+                //stopping enter from being propagated to parent dom elements.
                 event.preventDefault();
             }
+            else {
+                c.isNgNgridDropdownOpen = true;             
+            }
         }
-
+        
         scope.updateRangeFilter = function (col, StartRange, EndRange) {
             if (StartRange != null && EndRange != null) {
 
@@ -545,19 +582,19 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
 
                 var distinctValues = scope.distinctColValues[col.Name];
                 var colFilters = [];
-                for (var i = 0; i < distinctValues.length; i++) {
+                for (var i = 0; i < distinctValues.length; i++) {                    
                     var objToCompare = null;
-                    if (col.ColumnType == 'ngNGridDate') {
+                    if (col.ColumnType == 'ngNGridDate') {                        
                         //cast it to date for comparision
                         objToCompare = dateReviver(distinctValues[i]['DistinctValue']);
                     }
                     else {
-                        objToCompare = distinctValues[i]['DisplayValue'];
-                    }
+                        objToCompare = distinctValues[i]['DisplayValue'];                        
+                    }                    
                     if (objToCompare >= StartRange && objToCompare <= EndRange) {
                         //logDebug('compare ' + objToCompare + ' Start:' + StartRange + ' End:' + EndRange);
                         colFilters.push(distinctValues[i].DistinctValue);
-                    }
+                    }                    
                 }
                 if (colFilters.length > 0) {
                     scope.addColumnFilters(col.Name, colFilters);
@@ -565,9 +602,9 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
             }
         }
 
-        scope.gridFiltersChanged = function (colName, colFilters, colFilterAdded) {
+        scope.gridFiltersChanged = function (colName, colFilters, colFilterAdded) {            
+            scope.gridCurrentPage = 1;
             scope.notifyGridFiltersChanged({ filterColumnName: colName, filters: colFilters, isAdded: colFilterAdded });
-
             if (colName == '') {
                 removeStorage(window.location.href + '/ngNGridColFilters');
             }
@@ -583,15 +620,48 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
          * function returns Date objects for members that are formatted like ISO date strings.
          */
         function dateReviver(dateString) {
-            var a;
+            var a;           
             a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z*$/.exec(dateString);
             if (a) {
                 return new Date(+a[1], +a[2] - 1, +a[3], +a[4],
                                 +a[5], +a[6]);
-            }
+            }            
             return dateString;
         };
 
+
+        scope.getRowClass = function (row) {
+
+            if (row.isNgNgridMarkedForDelete) {
+                return 'danger';
+            }
+            else if (row.isNgNgridMarkedForNew) {
+                return 'success';
+            }
+            else if (row.isNgNgridDirty){
+                return 'warning';
+            }
+            else if (row.isNgNgridUpdated){
+                return 'ngngrid-animaterow';
+            }
+            else if (row.isNgNgridSelected) {
+                return 'info';
+            }
+        }
+
+        scope.getRowGlyph = function (index, row) {
+            if (index == 0) {
+                if (row.isNgNgridMarkedForDelete) {
+                    return 'glyphicon glyphicon-trash';
+                }
+                else if (row.isNgNgridMarkedForNew) {
+                    return 'glyphicon glyphicon-plus-sign';
+                }
+                else if (row.isNgNgridDirty) {
+                    return 'glyphicon glyphicon-edit';
+                }
+            }            
+        }
 
 
 
