@@ -230,7 +230,15 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                     var matchFound = false;
                     //look for colValue in DistinctValue
                     for (var j = 0; j < distinctValues.length; j++) {
-                        if (distinctValues[j].DistinctValue == colValue) {
+                        var disValueString = distinctValues[j].DistinctValue;
+                        var colValueString = colValue;
+                        if (typeof disValueString == 'object') {
+                            disValueString = JSON.stringify(disValueString);
+                        }
+                        if (typeof colValueString == 'object') {
+                            colValueString = JSON.stringify(colValueString);
+                        }                        
+                        if (disValueString == colValueString) {
                             //Value already exists; so increment the counter in the distinctValues array for that value.
                             matchFound = true;
                             distinctValues[j].DistinctCount += 1;
@@ -239,7 +247,16 @@ angular.module('ngNgrid', ['ui.bootstrap', 'ngAnimate'])
                     }
                     if (!matchFound) {
                         //new value found add to the distinctValues array
-                        var colDisplayValue = col.FilterTextFn ? col.FilterTextFn({ DistinctValue: colValue, DistinctCount: -1 }) : colValue;
+                        var colDisplayValue = null;
+                        if (col.FilterTextFn) {
+                            colDisplayValue =  col.FilterTextFn({ DistinctValue: colValue, DistinctCount: -1 });
+                        }
+                        else {
+                            colDisplayValue = colValue;
+                            if (typeof colDisplayValue == 'object') {
+                                colDisplayValue = JSON.stringify(colDisplayValue);
+                            }                           
+                        }                                                
                         if (col.ColumnType == 'ngNGridDate') {
                             colDisplayValue = col.FilterDateFormatFn ? $filter('date')(colDisplayValue, col.FilterDateFormatFn(null)) : $filter('date')(colDisplayValue);
                         }

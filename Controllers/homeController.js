@@ -254,6 +254,7 @@ appNgNgrid.controller('HomeController', ['$scope','$timeout',
                    SelectFn: function (row) { return $scope.optionList; },
                    ClassFn: function (r) { return 'label-danger'; },
                    GlyphFn: function (r) { return 'glyphicon-queen' },
+                   //FilterTextFn: function(c){return c.DistinctValue.myVal;},
                    SelectKey: 'myKey',
                    SelectValue: 'myVal'
                }               
